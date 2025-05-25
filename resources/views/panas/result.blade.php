@@ -48,7 +48,7 @@
     $moodImages = [
         'Positif' => 'happy-mood.gif',
         'Negatif' => 'negatif-mood2.gif',
-        'Netral'  => 'netral-mood-gif',
+        'Netral'  => 'netral-mood.gif',
         'Campuran' => 'mix-mood.gif',
     ];
     $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
