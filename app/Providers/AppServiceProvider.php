@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -33,5 +34,10 @@ class AppServiceProvider extends ServiceProvider
 
         $view->with('randomTip', $randomTip);
     });
+
+     if (app()->environment('production')) {
+        URL::forceScheme('https');
+    }
 }
 }
+
