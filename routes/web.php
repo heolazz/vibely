@@ -10,6 +10,10 @@ use App\Http\Controllers\UserController;
 
 // Halaman utama
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
 Route::get('/welcome', [ArticleController::class, 'index'])->name('welcome');
 
 // Route::get('/welcome', function () {
