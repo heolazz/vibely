@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto mt-8 p-10 bg-white rounded-2xl shadow-xl border border-gray-200">
+
     @if(session('success'))
         <div class="mb-8 p-4 bg-blue-50 border border-blue-300 text-blue-700 rounded-lg text-center font-semibold">
             {{ session('success') }}
@@ -9,91 +10,95 @@
     @endif
 
     @php
-    use App\Models\PanasResult;
-    use App\Models\MoodSong;
+        use App\Models\PanasResult;
+        use App\Models\MoodSong;
 
-    $result = PanasResult::where('user_id', auth()->id())->latest()->first();
-    $recommendedSongs = $result ? MoodSong::where('mood_type', determineMood($result->pa_score, $result->na_score))->get() : collect();
+        $result = PanasResult::where('user_id', auth()->id())->latest()->first();
+        $recommendedSongs = $result ? MoodSong::where('mood_type', determineMood($result->pa_score, $result->na_score))->get() : collect();
 
-    $pa = $result ? $result->pa_score : 0;
-    $na = $result ? $result->na_score : 0;
-    $total = $pa + $na;
+        $pa = $result ? $result->pa_score : 0;
+        $na = $result ? $result->na_score : 0;
+        $total = $pa + $na;
 
-    $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
-    $naPercent = 100 - $paPercent;
+        $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
+        $naPercent = 100 - $paPercent;
 
-    $radius = 70;
-    $circumference = 2 * M_PI * $radius;
+        $radius = 80;
+        $circumference = 2 * M_PI * $radius;
 
-    $strokePA = $circumference * ($paPercent / 100);
-    $strokeNA = $circumference * ($naPercent / 100);
+        $strokePA = $circumference * ($paPercent / 100);
+        $strokeNA = $circumference * ($naPercent / 100);
 
-    $colorPA = '#93c5fd'; // Biru pastel
-    $colorNA = '#9ca3af'; // Abu-abu
+        $colorPA = '#93c5fd'; // Biru pastel
+        $colorNA = '#9ca3af'; // Abu-abu
 
-    function determineMood($pa, $na) {
-        $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
-        $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
+        function determineMood($pa, $na) {
+            $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
+            $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
 
-        if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
-        if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
-        if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
-        if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
+            if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
+            if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
+            if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
+            if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
 
-        return 'Netral';
-    }
+            return 'Netral';
+        }
 
-    $moodText = determineMood($pa, $na);
-
-    $moodImages = [
-        'Positif' => 'happy-mood.gif',
-        'Negatif' => 'negatif-mood2.gif',
-        'Netral'  => 'netral-mood.gif',
-        'Campuran' => 'mix-mood.gif',
-    ];
-    $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
+        $moodText = determineMood($pa, $na);
+        $moodImages = [
+            'Positif' => 'happy-mood.gif',
+            'Negatif' => 'negatif-mood2.gif',
+            'Netral'  => 'netral-mood.gif',
+            'Campuran' => 'mix-mood.gif',
+        ];
+        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
     @endphp
 
     @if($result)
-        <h1 class="text-4xl font-extrabold text-blue-500 text-center mb-4">✨ Mood Result ✨</h1>
-        <p class="text-center text-gray-600 mb-12">Berikut ringkasan suasana hati Anda dari hasil kuesioner terakhir 💬</p>
+<h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-500 text-center mb-4">✨ Mood Result ✨</h1>
+<p class="text-sm sm:text-base text-center text-gray-600 mb-12">
+    Berikut ringkasan suasana hati Anda dari hasil kuesioner terakhir 💬
+</p>
 
-        <div class="flex items-center justify-center space-x-16 mb-16">
-            <div class="relative w-44 h-44">
-                <svg width="180" height="180" class="transform -rotate-90">
-                    <circle cx="90" cy="90" r="{{ $radius }}" stroke="#f3f4f6" stroke-width="15" fill="none" />
-                    <circle
-                        cx="90"
-                        cy="90"
-                        r="{{ $radius }}"
-                        stroke="{{ $colorPA }}"
-                        stroke-width="15"
-                        fill="none"
-                        stroke-dasharray="{{ $strokePA }} {{ $circumference - $strokePA }}"
-                        stroke-dashoffset="0"
-                        stroke-linecap="round"
-                    />
-                    <circle
-                        cx="90"
-                        cy="90"
-                        r="{{ $radius }}"
-                        stroke="{{ $colorNA }}"
-                        stroke-width="15"
-                        fill="none"
-                        stroke-dasharray="{{ $strokeNA }} {{ $circumference - $strokeNA }}"
-                        stroke-dashoffset="-{{ $strokePA }}"
-                        stroke-linecap="round"
-                    />
-                </svg>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 md:gap-x-8 items-center justify-items-center mb-16">
+    <!-- Lingkaran Diagram PA/NA -->
+    <div class="relative w-60 h-60">
+        <svg width="240" height="240" class="transform -rotate-90">
+            <circle cx="120" cy="120" r="{{ $radius }}" stroke="#f3f4f6" stroke-width="15" fill="none" />
+            <circle
+                cx="120"
+                cy="120"
+                r="{{ $radius }}"
+                stroke="{{ $colorPA }}"
+                stroke-width="15"
+                fill="none"
+                stroke-dasharray="{{ $strokePA }} {{ $circumference - $strokePA }}"
+                stroke-dashoffset="0"
+                stroke-linecap="round"
+            />
+            <circle
+                cx="120"
+                cy="120"
+                r="{{ $radius }}"
+                stroke="{{ $colorNA }}"
+                stroke-width="15"
+                fill="none"
+                stroke-dasharray="{{ $strokeNA }} {{ $circumference - $strokeNA }}"
+                stroke-dashoffset="-{{ $strokePA }}"
+                stroke-linecap="round"
+            />
+        </svg>
 
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-gray-800">
-                    <div class="text-sm font-semibold">PA / NA</div>
-                    <div class="text-lg font-bold">{{ $pa }} / {{ $na }}</div>
-                </div>
-            </div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center text-gray-800">
+            <div class="text-base font-semibold">PA / NA</div>
+            <div class="text-2xl font-bold">{{ $pa }} / {{ $na }}</div>
+        </div>
+    </div>
 
-            <div class="relative w-48 h-48 rounded-2xl overflow-hidden shadow-md flex items-center justify-center bg-blue-50 border-4 border-blue-100">
-                <img src="{{ $moodImage }}" alt="Sticker {{ $moodText }}" class="w-40 h-40 object-contain" />
+
+            <!-- Gambar Mood -->
+            <div class="relative w-64 md:w-48 aspect-square rounded-2xl overflow-hidden shadow-md flex items-center justify-center bg-blue-50 border-4 border-blue-100">
+                <img src="{{ $moodImage }}" alt="Sticker {{ $moodText }}" class="w-full h-full object-contain" />
             </div>
         </div>
 
@@ -140,6 +145,7 @@
         @else
             <p class="text-center text-gray-500 italic mt-8">Belum ada rekomendasi musik untuk mood ini.</p>
         @endif
+
     @else
         <p class="text-center text-gray-500 italic py-20">Belum ada hasil kuesioner. Yuk isi dulu ya ✨</p>
     @endif
@@ -149,5 +155,6 @@
             ← Kembali ke Kuesioner
         </a>
     </div>
+
 </div>
 @endsection
