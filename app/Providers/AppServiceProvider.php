@@ -35,9 +35,9 @@ class AppServiceProvider extends ServiceProvider
         $view->with('randomTip', $randomTip);
     });
 
-    //  if (app()->environment('production')) {
-    //     URL::forceScheme('https');
-    // }
+     if (app()->environment('production')) {
+        URL::forceScheme('https');
+    }
 }
 }
 
