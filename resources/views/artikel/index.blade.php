@@ -68,7 +68,7 @@
                         </p>
 
                         <a href="{{ route('artikel.show', $article->id) }}"
-                           class="mt-auto bg-indigo-600 text-white text-center px-6 py-2 rounded-md font-semibold hover:bg-indigo-700 transition duration-300 w-fit">
+                           class="mt-auto bg-indigo-600 text-white text-center px-6 py-2 rounded-md font-semibold hover:bg-indigo-700 transition duration-300 w-1/3">
                             Baca
                         </a>
                     </div>
