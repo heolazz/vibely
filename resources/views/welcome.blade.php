@@ -55,28 +55,31 @@
             </div>
         </header>
 
-        <section class="flex-grow flex items-center justify-center py-12 md:py-20 bg-gradient-to-br from-white to-blue-50">
-            <div class="container mx-auto max-w-6xl flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-16 px-4 text-center lg:text-left"> {{-- Added text-center for mobile, removed from inner div --}}
-                <div class="flex-1 pt-10 lg:pt-0"> {{-- Removed text-center from here as it's now on the parent --}}
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 md:mb-6 leading-tight text-gray-900"> {{-- Adjusted font sizes for mobile --}}
-                        Kelola Kesehatan Mentalmu,<br>Kapan Saja, Di Mana Saja<br><span class="text-primary-accent">dengan Vibely</span>
-                    </h2>
-                    <p class="text-base md:text-lg text-gray-700 mb-6 md:mb-8 max-w-xl mx-auto lg:max-w-none lg:mx-0"> {{-- Added mx-auto for mobile text centering, removed lg:mx-0 for consistency --}}
-                        Vibely hadir untuk membantu Anda menjaga kesejahteraan emosional melalui jurnal harian, pelacak mood, dan rekomendasi musik menenangkan.
-                    </p>
-                    <div class="flex justify-center lg:justify-start gap-3 md:gap-4 flex-col sm:flex-row"> {{-- Added flex-col for mobile, then flex-row on sm --}}
-                        <a href="{{ route('register') }}" class="btn-primary w-full sm:w-auto">Mulai Perjalananmu</a> {{-- Made buttons full width on mobile --}}
-                        <a href="#fitur" class="btn-outline-primary w-full sm:w-auto">Jelajahi Fitur</a> {{-- Made buttons full width on mobile --}}
-                    </div>
-                </div>
-
-                <div class="flex-1 flex justify-center items-center relative mt-8 lg:mt-0"> {{-- Added mt-8 for spacing --}}
-                    <img src="{{ asset('images/landingpage-hero.png') }}" alt="Vibely App Screenshot" class="max-w-full h-auto rounded-lg translate-y-0 md:translate-y-8"> {{-- Removed translate-y-8 on mobile --}}
-                    <div class="absolute top-0 right-4 md:right-10 w-3 h-3 md:w-4 md:h-4 bg-blue-200 rounded-full opacity-50"></div> {{-- Adjusted circle size/position --}}
-                    <div class="absolute bottom-2 left-2 md:bottom-5 md:left-5 w-2 h-2 md:w-3 md:h-3 bg-indigo-200 rounded-full opacity-50"></div> {{-- Adjusted circle size/position --}}
-                </div>
+<section class="flex-grow flex items-center justify-center py-12 md:py-20 bg-gradient-to-br from-white to-blue-50">
+    {{-- Main container for the hero content, using Grid --}}
+    <div class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-16 px-4 text-center lg:text-left">
+        {{-- Left Column (Text Content) --}}
+        <div class="pt-10 lg:pt-0 order-2 lg:order-1"> {{-- order-2 for mobile (text below image), order-1 for desktop (text left of image) --}}
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 md:mb-6 leading-tight text-gray-900">
+                Kelola Kesehatan Mentalmu,<br>Kapan Saja, Di Mana Saja<br><span class="text-primary-accent">dengan Vibely</span>
+            </h2>
+            <p class="text-base md:text-lg text-gray-700 mb-6 md:mb-8 max-w-xl mx-auto lg:max-w-none lg:mx-0">
+                Vibely hadir untuk membantu Anda menjaga kesejahteraan emosional melalui jurnal harian, pelacak mood, dan rekomendasi musik menenangkan.
+            </p>
+            <div class="flex justify-center lg:justify-start gap-3 md:gap-4 flex-col sm:flex-row">
+                <a href="{{ route('register') }}" class="btn-primary w-full sm:w-auto">Mulai Perjalananmu</a>
+                <a href="#fitur" class="btn-outline-primary w-full sm:w-auto">Jelajahi Fitur</a>
             </div>
-        </section>
+        </div>
+
+        {{-- Right Column (Image and Decorative Elements) --}}
+        <div class="flex justify-center items-center relative mt-8 lg:mt-0 order-1 lg:order-2"> {{-- order-1 for mobile (image above text), order-2 for desktop (image right of text) --}}
+            <img src="{{ asset('images/landingpage-hero.png') }}" alt="Vibely App Screenshot" class="max-w-full h-auto rounded-lg translate-y-0 md:translate-y-8">
+            <div class="absolute top-0 right-4 md:right-10 w-3 h-3 md:w-4 md:h-4 bg-blue-200 rounded-full opacity-50"></div>
+            <div class="absolute bottom-2 left-2 md:bottom-5 md:left-5 w-2 h-2 md:w-3 md:h-3 bg-indigo-200 rounded-full opacity-50"></div>
+        </div>
+    </div>
+</section>
 
         <section id="fitur" class="py-10 md:py-16 bg-white"> {{-- Adjusted vertical padding --}}
             <div class="container mx-auto max-w-6xl px-4">
