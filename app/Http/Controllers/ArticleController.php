@@ -40,6 +40,17 @@ class ArticleController extends Controller
     return view('artikel.show', compact('article'));
     }
 
+  /**
+     * Display all articles.
+     * This new method will fetch all articles for the 'all articles' page.
+     */
+    public function allArticles()
+    {
+        $articles = Article::latest()->paginate(9); // You can adjust the pagination limit
+        return view('artikel.index', compact('articles'));
+    }
+
+    
     /**
      * Show the form for editing the specified resource.
      */

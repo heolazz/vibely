@@ -8,10 +8,9 @@
     @endphp
 @else
 
-<!-- Hero Section -->
 <section class="bg-gradient-to-br from-white to-gray-100 py-14 sm:py-20">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">
+        <h1 class="text-3xl sm:text-4xl md::text-5xl font-bold text-gray-900 tracking-tight">
             Selamat datang di <span class="text-indigo-600">Vibely</span>
         </h1>
         <p class="mt-4 text-base sm:text-lg text-gray-700 max-w-2xl mx-auto">
@@ -38,7 +37,6 @@
     </div>
 </section>
 
-<!-- Welcome Tools -->
 <section class="bg-white py-12 sm:py-16">
     <div class="max-w-5xl mx-auto px-4 text-center">
         <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Hai, {{ Auth::user()->name }} 👋</h2>
@@ -72,22 +70,24 @@
     </div>
 </section>
 
-
-
-<!-- Artikel Section -->
 <section class="bg-gray-20 py-4 pb-14">
     <div class="container mx-auto px-4 max-w-6xl mt-16">
-    <h2 class="text-3xl font-bold text-center text-black dark:text-white mb-10">Artikel Seputar Kesehatan Mental</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      @foreach ($articles as $article)
-        <a href="{{ route('artikel.show', $article->id) }}" class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 block">
-          <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">{{ $article->excerpt }}</p>
-        </a>
-      @endforeach
+        <h2 class="text-3xl font-bold text-center text-black dark:text-white mb-10">Artikel Seputar Kesehatan Mental</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            @foreach ($articles as $article)
+                <a href="{{ route('artikel.show', $article->id) }}" class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 block">
+                    <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $article->excerpt }}</p>
+                </a>
+            @endforeach
+        </div>
+        {{-- Add the "Lihat Semua Artikel" button here --}}
+        <div class="text-center mt-10">
+            <a href="{{ route('artikel.index') }}" class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-md">
+                Lihat Semua Artikel
+            </a>
+        </div>
     </div>
-</div>
-
 </section>
 
 @endif

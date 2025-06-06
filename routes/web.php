@@ -131,3 +131,8 @@ Route::get('/', [ArticleController::class, 'index']);
 
 Route::get('/artikel', [ArticleController::class, 'index'])->name('artikel.index');
 Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('artikel.show');
+
+
+
+// Route for the "All Articles" page
+Route::get('/articles', [ArticleController::class, 'allArticles'])->name('artikel.index');
