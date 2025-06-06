@@ -9,13 +9,17 @@
 </head>
 <body class="bg-white font-sans text-black">
 
+<!-- Wrapper HEADER + HERO -->
 <div class="relative">
+    <!-- Background Image with Gradient Overlay -->
     <div class="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
          style="background-image: linear-gradient(to bottom, rgba(255,255,255,0) 40%, rgba(255,255,255,1) 90%), url('{{ asset('images/bg-home2.png') }}');">
     </div>
 
+    <!-- Content -->
     <div class="relative z-10">
 
+        <!-- Header -->
         <header class="shadow py-4 px-4 sticky top-0 z-20 bg-white">
             <div class="container mx-auto flex justify-between items-center px-4">
                 <h1 class="text-xl font-bold text-black">Vibely</h1>
@@ -34,68 +38,43 @@
             </div>
         </header>
 
-        {{-- Hero Section --}}
-        <section class="min-h-screen bg-white text-[#252525] flex items-center px-10 py-20">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                {{-- Kiri: Teks --}}
-                <div class="space-y-6">
-                    <h1 class="text-4xl md:text-5xl font-bold leading-tight">
-                        Kesehatan Mentalmu Berharga 💙
-                    </h1>
-                    <p class="text-lg">
-                        Kelola emosimu, catat suasana hatimu, dan temukan musik yang menenangkan jiwamu.
-                    </p>
-                    <div class="space-x-4">
-                        <a href="{{ route('login') }}" class="bg-[#252525] text-white px-6 py-3 rounded-xl hover:opacity-90 transition">Masuk</a>
-                        <a href="{{ route('register') }}" class="border border-[#252525] text-[#252525] px-6 py-3 rounded-xl hover:bg-[#252525] hover:text-white transition">Daftar</a>
-                    </div>
+        <!-- Hero Section -->
+        <section class="min-h-screen flex flex-col items-center justify-center px-4 text-center -mt-10 py-20">
+            <div class="bg-white border border-gray-200 rounded-3xl p-10 max-w-4xl text-center shadow-xl">
+                <h2 class="text-5xl font-extrabold mb-6 text-black">Kesehatan Mentalmu Berharga 💙</h2>
+                <p class="text-lg text-gray-700 mb-6">Kelola emosimu, catat suasana hatimu, dan temukan musik yang menenangkan jiwamu.</p>
+                <div class="flex justify-center gap-4 mb-8">
+                    <a href="{{ route('login') }}" class="bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition">Masuk</a>
+                    <a href="#artikel" class="border border-black text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition">Jelajahi</a>
                 </div>
 
-                {{-- Kanan: Gambar --}}
-                <div class="flex justify-center">
-                    <img src="{{ asset('images/landingpage-hero.png') }}" alt="Hero Image" class="max-w-full h-auto">
+                <!-- 3 Fitur -->
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-gray-50 p-4 rounded-xl shadow">
+                        <h3 class="text-xl font-semibold text-black mb-2">Jurnal Emosi</h3>
+                        <p class="text-gray-600 text-sm">Catat perasaan dan pikiranmu setiap hari untuk pemahaman yang lebih baik.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl shadow">
+                        <h3 class="text-xl font-semibold text-black mb-2">Pelacak Mood</h3>
+                        <p class="text-gray-600 text-sm">Pantau perubahan suasana hati dan temukan pola emosionalmu.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-xl shadow">
+                        <h3 class="text-xl font-semibold text-black mb-2">Rekomendasi Musik</h3>
+                        <p class="text-gray-600 text-sm">Temukan musik yang sesuai dengan moodmu untuk meningkatkan suasana hati.</p>
+                    </div>
                 </div>
             </div>
         </section>
     </div>
 </div>
 
-{{-- Section Fitur --}}
-<section class="bg-[#252525] text-white px-10 py-20">
-    <div class="text-center mb-12">
-        <h2 class="text-3xl font-semibold">Fitur Unggulan Vibely</h2>
-        <p class="text-lg mt-2">Dibuat khusus untuk mendukung kesejahteraan emosimu</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {{-- Fitur 1 --}}
-        <div class="bg-[#333] rounded-2xl p-6 text-center shadow-lg">
-            <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="mx-auto w-16 h-16 mb-4">
-            <h3 class="text-xl font-semibold mb-2">Jurnal Emosi</h3>
-            <p class="text-sm">Catat perasaan dan pikiranmu setiap hari untuk pemahaman yang lebih baik.</p>
-        </div>
-
-        {{-- Fitur 2 --}}
-        <div class="bg-[#333] rounded-2xl p-6 text-center shadow-lg">
-            <img src="{{ asset('icons/icon-kuesioner.png') }}" alt="Pelacak Mood" class="mx-auto w-16 h-16 mb-4">
-            <h3 class="text-xl font-semibold mb-2">Pelacak Mood</h3>
-            <p class="text-sm">Pantau perubahan suasana hati dan temukan pola emosionalmu.</p>
-        </div>
-
-        {{-- Fitur 3 --}}
-        <div class="bg-[#333] rounded-2xl p-6 text-center shadow-lg">
-            <img src="{{ asset('icons/icon-music.png') }}" alt="Rekomendasi Musik" class="mx-auto w-16 h-16 mb-4">
-            <h3 class="text-xl font-semibold mb-2">Rekomendasi Musik</h3>
-            <p class="text-sm">Temukan musik yang sesuai dengan moodmu untuk meningkatkan suasana hati.</p>
-        </div>
-    </div>
-</section>
-
+<!-- Section Edukasi Mental Health -->
 <section class="bg-white dark:bg-black py-16 px-6 md:px-12 max-w-7xl mx-auto">
   <h2 class="text-4xl font-bold text-center text-black dark:text-white mb-12">Edukasi Kesehatan Mental</h2>
 
   <div class="space-y-20 max-w-4xl mx-auto">
 
+    <!-- 1. Apa itu Kesehatan Mental? -->
     <div class="flex flex-col md:flex-row items-center gap-8">
       <div class="md:w-1/2 text-center md:text-left">
         <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3">Apa itu Kesehatan Mental?</h3>
@@ -104,34 +83,41 @@
         </p>
       </div>
 <div class="mt-6 flex justify-center">
-  <iframe width="420" height="180" src="https://www.youtube.com/embed/oxx564hMBUI?si=WJyjrTX4dGPjifzl"
-    title="Edukasi Kesehatan Mental" frameborder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  <iframe width="420" height="180" src="https://www.youtube.com/embed/oxx564hMBUI?si=WJyjrTX4dGPjifzl" 
+    title="Edukasi Kesehatan Mental" frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
     allowfullscreen class="rounded-lg shadow-md">
   </iframe>
 </div>
     </div>
 
+<!-- 2. Kenapa Kita Harus Mengenali Emosi? -->
 <div class="flex flex-col md:flex-row items-center gap-8">
+  <!-- Kartu Emosi -->
   <div class="md:w-1/2 order-2 md:order-1 grid grid-cols-2 gap-4">
+    <!-- Emosi: Marah -->
     <div class="bg-gray-100 rounded-lg p-6 shadow hover:shadow-lg transition cursor-pointer">
       <h4 class="text-xl font-semibold text-[#252525] mb-2">😠 Marah</h4>
       <p class="text-gray-700 text-sm">Bisa muncul karena stres atau tekanan.</p>
     </div>
+    <!-- Emosi: Sedih -->
     <div class="bg-gray-100 rounded-lg p-6 shadow hover:shadow-lg transition cursor-pointer">
       <h4 class="text-xl font-semibold text-[#252525] mb-2">😢 Sedih</h4>
       <p class="text-gray-700 text-sm">Mungkin karena kehilangan sesuatu yang berharga.</p>
     </div>
+    <!-- Emosi: Senang -->
     <div class="bg-gray-100 rounded-lg p-6 shadow hover:shadow-lg transition cursor-pointer">
       <h4 class="text-xl font-semibold text-[#252525] mb-2">😊 Senang</h4>
       <p class="text-gray-700 text-sm">Datang dari hal-hal sederhana yang membuat hati bahagia.</p>
     </div>
+    <!-- Emosi: Takut -->
     <div class="bg-gray-100 rounded-lg p-6 shadow hover:shadow-lg transition cursor-pointer">
       <h4 class="text-xl font-semibold text-[#252525] mb-2">😨 Takut</h4>
       <p class="text-gray-700 text-sm">Biasanya muncul saat menghadapi hal yang tidak pasti.</p>
     </div>
   </div>
 
+  <!-- Penjelasan -->
   <div class="md:w-1/2 order-1 md:order-2 text-center md:text-left">
     <h3 class="text-2xl font-semibold text-[#252525] mb-3">Kenapa Kita Harus Mengenali Emosi?</h3>
     <p class="text-gray-600 leading-relaxed">
@@ -142,6 +128,7 @@
 
 
 
+<!-- 3. Musik sebagai Terapi Emosi (playlist dihapus) -->
 <div class="flex flex-col md:flex-row items-center gap-8">
   <div class="md:w-1/2 text-center md:text-left">
     <h3 class="text-2xl font-semibold text-gray-900 dark:text-white mb-3">Musik sebagai Terapi Emosi</h3>
@@ -150,15 +137,16 @@
     </p>
   </div>
   <div class="md:w-1/2 flex justify-center">
-    <iframe width="420" height="180" src="https://www.youtube.com/embed/UjhgHEDG0NU?si=P_RkwFs-oqmcEj3V"
-      title="Music Therapy Video" frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    <iframe width="420" height="180" src="https://www.youtube.com/embed/UjhgHEDG0NU?si=P_RkwFs-oqmcEj3V" 
+      title="Music Therapy Video" frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
       allowfullscreen class="rounded-lg shadow-md">
     </iframe>
   </div>
 </div>
 
 
+    <!-- 4. Yuk Mulai Perjalanan Emosimu -->
     <div class="text-center max-w-2xl mx-auto">
       <h3 class="text-3xl font-bold text-black dark:text-white mb-6">Yuk Mulai Perjalanan Emosimu</h3>
       <p class="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
