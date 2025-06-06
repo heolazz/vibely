@@ -3,7 +3,6 @@
 @section('content')
 <div class="bg-white min-h-screen py-12">
     <div class="max-w-6xl mx-auto px-6">
-        <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <h1 class="text-3xl font-bold text-gray-800">📰 Daftar Artikel</h1>
             <a href="{{ route('admin.articles.create') }}"
@@ -15,7 +14,6 @@
             </a>
         </div>
 
-        <!-- Notifikasi -->
         @if(session('success'))
             <div class="mb-6 p-4 rounded-lg bg-green-100 border border-green-300 text-green-800 shadow-sm">
                 {{ session('success') }}
@@ -23,12 +21,12 @@
         @endif
 
         @if($articles->count())
-        <!-- Tabel Desktop -->
         <div class="hidden md:block overflow-x-auto bg-white shadow-md rounded-xl ring-1 ring-black ring-opacity-5">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-indigo-50">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Judul</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th> {{-- Tambah kolom kategori --}}
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
                         <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -37,6 +35,7 @@
                     @foreach($articles as $article)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-sm text-gray-900">{{ $article->title }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $article->category ?? 'N/A' }}</td> {{-- Tampilkan kategori --}}
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $article->created_at->format('d M Y') }}</td>
                         <td class="px-6 py-4 text-sm text-center">
                             <div class="flex justify-center gap-2 flex-wrap">
@@ -65,11 +64,11 @@
             </table>
         </div>
 
-        <!-- Mobile (Cards) -->
         <div class="md:hidden space-y-4">
             @foreach($articles as $article)
             <div class="bg-white rounded-xl shadow p-4">
                 <h3 class="text-lg font-semibold text-gray-800">{{ $article->title }}</h3>
+                <p class="text-sm text-gray-600 mt-1"><strong>Kategori:</strong> {{ $article->category ?? 'N/A' }}</p> {{-- Tampilkan kategori --}}
                 <p class="text-sm text-gray-600 mt-1"><strong>Tanggal:</strong> {{ $article->created_at->format('d M Y') }}</p>
                 <div class="mt-3 flex flex-wrap gap-2">
                     <a href="{{ route('artikel.show', $article) }}" target="_blank"
@@ -94,7 +93,6 @@
             @endforeach
         </div>
 
-        <!-- Pagination (desktop & mobile) -->
         <div class="mt-6">
             {{ $articles->links() }}
         </div>

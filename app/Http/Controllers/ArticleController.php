@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str; // Pastikan ini di-import untuk Str::headline() jika belum
 
 class ArticleController extends Controller
 {
     /**
      * Display a listing of the resource.
+     * This method will still be used for the 'welcome' page, showing a limited number of articles.
      */
     public function index()
     {
@@ -21,7 +23,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        // This method is likely for admin, but it's empty. Keep as is for now.
     }
 
     /**
@@ -29,7 +31,7 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // This method is likely for admin, but it's empty. Keep as is for now.
     }
 
     /**
@@ -37,26 +39,42 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-    return view('artikel.show', compact('article'));
+        return view('artikel.show', compact('article'));
     }
 
-  /**
-     * Display all articles.
-     * This new method will fetch all articles for the 'all articles' page.
+    /**
+     * Display all articles, with optional category filtering.
+     * This method will serve the 'artikel.index' route.
      */
-    public function allArticles()
+    public function allArticles(Request $request) // Tambahkan Request $request
     {
-        $articles = Article::latest()->paginate(9); // You can adjust the pagination limit
-        return view('artikel.index', compact('articles'));
+        $query = Article::latest(); // Mulai dengan query dasar
+
+        $selectedCategory = $request->query('category'); // Ambil parameter 'category' dari URL
+
+        // Jika ada parameter 'category' dan tidak kosong
+        if ($selectedCategory) {
+            // Konversi slug kembali ke format kategori yang disimpan di database
+            // Contoh: 'mengenali-emosi' menjadi 'Mengenali Emosi'
+            $dbCategoryName = Str::headline(str_replace('-', ' ', $selectedCategory));
+
+            $query->where('category', $dbCategoryName);
+        }
+
+        $articles = $query->paginate(9); // Terapkan paginasi
+
+        // Untuk highlight kategori yang dipilih di Blade, teruskan juga selectedCategory
+        // Atau Anda bisa menggunakan request('category') langsung di Blade
+        return view('artikel.index', compact('articles', 'selectedCategory'));
     }
 
-    
+
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Article $article)
     {
-        //
+        // This method is likely for admin, but it's empty. Keep as is for now.
     }
 
     /**
@@ -64,7 +82,7 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        // This method is likely for admin, but it's empty. Keep as is for now.
     }
 
     /**
@@ -72,6 +90,9 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        // This method is likely for admin, but it's empty. Keep as is for now.
     }
+
+    // Hapus metode filterByCategory karena logikanya sudah dipindahkan ke allArticles
+    // public function filterByCategory(Request $request) { ... }
 }

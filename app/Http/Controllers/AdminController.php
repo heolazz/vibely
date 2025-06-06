@@ -104,6 +104,8 @@ public function storeArticle(Request $request)
     $request->validate([
         'title' => 'required|string|max:255',
         'content' => 'required|string',
+        'excerpt' => 'nullable|string',
+        'category' => 'nullable|string|max:100',
     ]);
 
     $excerpt = $this->makeExcerpt($request->input('content'));
@@ -112,6 +114,7 @@ public function storeArticle(Request $request)
         'title' => $request->input('title'),
         'content' => $request->input('content'),
         'excerpt' => $excerpt,
+        'category' => $request->input('category'),
     ]);
 
     return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil ditambahkan!');
@@ -134,6 +137,7 @@ public function storeArticle(Request $request)
     $request->validate([
         'title' => 'required|string|max:255',
         'content' => 'required|string',
+        
     ]);
 
     $excerpt = $this->makeExcerpt($request->input('content'));
@@ -142,11 +146,13 @@ public function storeArticle(Request $request)
         'title' => $request->input('title'),
         'content' => $request->input('content'),
         'excerpt' => $excerpt,
+        'category' => $request->input('category'),
     ]);
 
     return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil diperbarui!');
 }
   
+
       // Hapus artikel
       public function destroyArticle(Article $article)
       {
@@ -181,7 +187,7 @@ public function storeSong(Request $request)
     ]);
 
     Song::create([
-        'judul' => $request->title,
+        'judul' => $request->judul,
         'artist' => $request->artist,
         'url' => $request->url,
     ]);
@@ -205,7 +211,7 @@ public function updateSong(Request $request, Song $song)
     ]);
 
     $song->update([
-        'judul' => $request->title,
+        'judul' => $request->judul,
         'artist' => $request->artist,
         'url' => $request->url,
     ]);
