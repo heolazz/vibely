@@ -2,14 +2,11 @@
     <div class="min-h-screen flex items-center justify-center bg-gray-50 p-4 font-sans antialiased">
         <div class="flex w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden transition-transform duration-500 ease-in-out hover:scale-[1.005]">
             {{-- Hero Kiri --}}
-            {{-- Menggunakan warna solid yang ada atau gradient yang paling dasar --}}
-            {{-- Karena from-gray-800 via-gray-700 to-gray-900 tidak ada, kita pakai bg-gray-800 saja --}}
             <div class="hidden md:block w-1/2 p-10 text-white relative bg-gray-800 rounded-l-2xl">
                 {{-- bg-black dan bg-opacity-30 terbukti ada --}}
-                <div class="absolute inset-0 bg-black bg-opacity-30 z-0 rounded-l-2xl"></div>
                 <div class="relative z-10 flex flex-col justify-between h-full">
                     <div class="text-xs tracking-widest uppercase mb-4 opacity-80">
-                        <span class="inline-block px-3 py-1 rounded-full bg-white bg-opacity-20 backdrop-blur-sm text-white font-semibold">
+                        <span class="inline-block px-3 py-1 rounded-full bg-white bg-opacity-20 text-gray-100 font-semibold">
                             Vibely Insight
                         </span>
                     </div>
@@ -34,8 +31,7 @@
 
                         @foreach($features as $feature)
                             <span class="flex items-center text-sm">
-                                {{-- hapus saturate-200 hue-rotate-180 karena tidak ada --}}
-                                <img src="{{ asset("icons/{$feature['src']}") }}" alt="{{ $feature['label'] }}" class="w-5 h-5 mr-2 filter invert brightness-0">
+                                <img src="{{ asset("icons/{$feature['src']}") }}" alt="{{ $feature['label'] }}" class="w-5 h-5 mr-2">
                                 {{ $feature['label'] }}
                             </span>
                         @endforeach
