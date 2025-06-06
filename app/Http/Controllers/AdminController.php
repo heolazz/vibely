@@ -128,7 +128,7 @@ public function storeArticle(Request $request)
   
       private function makeExcerpt($content, $limit = 100)
 {
-    return \Str::limit(strip_tags($content), $limit);
+    return Str::limit(strip_tags($content), $limit);
 }
 
       // Update artikel
@@ -137,6 +137,8 @@ public function storeArticle(Request $request)
     $request->validate([
         'title' => 'required|string|max:255',
         'content' => 'required|string',
+        'excerpt' => 'nullable|string|max:500',   // WAJIB: Aturan validasi
+        'category' => 'required|string',
         
     ]);
 
