@@ -26,37 +26,37 @@
                 <thead class="bg-indigo-50">
                     <tr>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Judul</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th> {{-- Tambah kolom kategori --}}
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th>
                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
+                        {{-- Menambahkan lebar minimum yang cukup untuk mencegah wrapping --}}
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider min-w-[180px]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
                     @foreach($articles as $article)
                     <tr class="hover:bg-gray-50 transition">
                         <td class="px-6 py-4 text-sm text-gray-900">{{ $article->title }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-700">{{ $article->category ?? 'N/A' }}</td> {{-- Tampilkan kategori --}}
+                        <td class="px-6 py-4 text-sm text-gray-700">{{ $article->category ?? 'N/A' }}</td>
                         <td class="px-6 py-4 text-sm text-gray-700">{{ $article->created_at->format('d M Y') }}</td>
-                        <td class="px-6 py-4 text-sm text-center">
-                            <div class="flex justify-center gap-2 flex-wrap">
-                                <a href="{{ route('artikel.show', $article) }}" target="_blank"
-                                   class="inline-flex items-center bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
-                                    👁️ Lihat
-                                </a>
-                                <a href="{{ route('admin.articles.edit', $article) }}"
-                                   class="inline-flex items-center bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
-                                    ✏️ Edit
-                                </a>
-                                <form action="{{ route('admin.articles.destroy', $article) }}" method="POST"
-                                      onsubmit="return confirm('Hapus artikel ini?');" class="inline-block">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                            class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
-                                        🗑️ Hapus
-                                    </button>
-                                </form>
-                            </div>
+                        {{-- MEMBUAT TD INI SEBAGAI FLEX CONTAINER DAN MENCEGAH WRAPPING --}}
+                        <td class="px-6 py-4 text-sm flex justify-center items-center gap-2 whitespace-nowrap">
+                            <a href="{{ route('artikel.show', $article) }}" target="_blank"
+                               class="inline-flex items-center bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
+                                👁️ Lihat
+                            </a>
+                            <a href="{{ route('admin.articles.edit', $article) }}"
+                               class="inline-flex items-center bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
+                                ✏️ Edit
+                            </a>
+                            <form action="{{ route('admin.articles.destroy', $article) }}" method="POST"
+                                  onsubmit="return confirm('Hapus artikel ini?');" class="inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="inline-flex items-center bg-red-100 hover:bg-red-200 text-red-600 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
+                                    🗑️ Hapus
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
@@ -68,9 +68,9 @@
             @foreach($articles as $article)
             <div class="bg-white rounded-xl shadow p-4">
                 <h3 class="text-lg font-semibold text-gray-800">{{ $article->title }}</h3>
-                <p class="text-sm text-gray-600 mt-1"><strong>Kategori:</strong> {{ $article->category ?? 'N/A' }}</p> {{-- Tampilkan kategori --}}
+                <p class="text-sm text-gray-600 mt-1"><strong>Kategori:</strong> {{ $article->category ?? 'N/A' }}</p>
                 <p class="text-sm text-gray-600 mt-1"><strong>Tanggal:</strong> {{ $article->created_at->format('d M Y') }}</p>
-                <div class="mt-3 flex flex-wrap gap-2">
+                <div class="mt-3 flex flex-wrap gap-2 justify-center items-center">
                     <a href="{{ route('artikel.show', $article) }}" target="_blank"
                        class="inline-flex items-center bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-3 py-1 rounded-md text-xs font-medium shadow-sm transition">
                         👁️ Lihat
