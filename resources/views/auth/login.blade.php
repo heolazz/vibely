@@ -6,7 +6,7 @@
                 {{-- bg-black dan bg-opacity-30 terbukti ada --}}
                 <div class="relative z-10 flex flex-col justify-between h-full">
                     <div class="text-xs tracking-widest uppercase mb-4 opacity-80">
-                        <span class="inline-block px-3 py-1 rounded-full bg-white bg-opacity-20 text-gray-100 font-semibold">
+                        <span class="inline-block px-3 py-1 rounded-full text-gray-100 font-semibold">
                             Vibely Insight
                         </span>
                     </div>
