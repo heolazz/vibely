@@ -7,6 +7,7 @@ use App\Http\Controllers\RekomendasiController;
 use App\Http\Controllers\PanasController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MusicRecommendationController;
 
 // Halaman utama
 
@@ -139,7 +140,7 @@ Route::get('/articles', [ArticleController::class, 'allArticles'])->name('artike
 Route::get('/artikel', [ArticleController::class, 'filterByCategory'])->name('artikel.index');
 
 
-    
+
 // Rute untuk halaman utama rekomendasi (dengan filter opsional)
 Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi');
 
@@ -152,3 +153,16 @@ Route::get('/rekomendasi/history/{id}', [RekomendasiController::class, 'show'])-
 // Rute untuk menghapus catatan emosi
 Route::delete('/emotion-notes/{id}', [RekomendasiController::class, 'destroyEmotion'])->name('emotion.destroy');
 
+
+
+Route::middleware(['auth'])->group(function () {
+    // ... (existing routes)
+
+    // Rute untuk halaman utama rekomendasi musik baru
+    Route::get('/daftar-musik', [MusicRecommendationController::class, 'index'])->name('musik.daftar'); // <-- NAMA ROUTE BARU DAN UNIK
+    // Jika Anda punya route rekomendasi lain yang menyimpan jurnal, pastikan itu masih mengarah ke controller yang benar.
+    // Misalnya, jika RekomendasiController@filter masih dibutuhkan untuk POST jurnal:
+    Route::post('/rekomendasi', [RekomendasiController::class, 'filter']);
+    // Jika MusicRecommendationController@show diperlukan:
+    // Route::get('/rekomendasi-musik/{songId}', [MusicRecommendationController::class, 'show'])->name('rekomendasi.show');
+});

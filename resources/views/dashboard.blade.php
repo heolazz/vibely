@@ -120,7 +120,7 @@
                             ['icon' => asset('icons/icon-kuesioner.png'), 'title' => 'Isi PANAS', 'route' => route('panas.show')],
                             ['icon' => asset('icons/icon-new.png'), 'title' => 'Hasil PANAS', 'route' => route('panas.result')],
                             ['icon' => asset('icons/icon-history.png'), 'title' => 'Riwayat Mood', 'route' => route('panas.history')],
-                            ['icon' => asset('icons/icon-music.png'), 'title' => 'Rekomendasi Musik', 'route' => route('rekomendasi')],
+                            ['icon' => asset('icons/icon-music.png'), 'title' => 'Rekomendasi Musik', 'route' => route('musik.daftar')],
                             ['icon' => asset('icons/icon-education.png'), 'title' => 'Baca Artikel', 'route' => route('artikel.index')],
                             ['icon' => asset('icons/icon-journal.png'), 'title' => 'Riwayat Jurnal', 'route' => route('rekomendasi')],
                             // You can uncomment or add more here if needed.

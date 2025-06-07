@@ -100,10 +100,10 @@ private function determineMood($pa, $na)
 
     // Penanganan tambahan untuk kondisi sedang
     if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
-    if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Cenderung Positif';
-    if ($paMood === 'sedang' && $naMood === 'rendah') return 'Cenderung Positif';
-    if ($paMood === 'rendah' && $naMood === 'sedang') return 'Cenderung Negatif';
-    if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Cenderung Negatif';
+    if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
+    if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
+    if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
+    if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
 
     // Default
     return 'Netral';
