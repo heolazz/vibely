@@ -82,10 +82,11 @@
                 </div>
 
                 @if($latestMoodNote)
-                    <p class="text-xl text-blue-600 font-semibold mb-2">
-                        Terakhir merasa: <span class="font-bold">{{ $latestMoodNote->emotion }}</span>
+                    {{-- Improved text for last entry --}}
+                    <p class="text-lg text-gray-700 font-semibold mb-2">
+                        Anda terakhir merasa: <span class="text-blue-600 font-bold">{{ $latestMoodNote->emotion }}</span>
                     </p>
-                    <p class="text-sm text-gray-600 italic mb-4 max-w-sm truncate mx-auto">
+                    <p class="text-sm text-gray-600 italic mb-4 max-w-sm mx-auto">
                         "{{ Str::limit($latestMoodNote->note, 100) }}"
                     </p>
                     <p class="text-xs text-gray-500 mb-4">Dicatat {{ $latestMoodNote->created_at->diffForHumans() }}</p>
@@ -94,7 +95,10 @@
                     </a>
                     <a href="{{ route('emotion.show', $latestMoodNote->id) }}" class="mt-3 text-blue-500 hover:underline text-xs">Lihat Detail Jurnal Ini</a>
                 @else
-                    <p class="text-base text-gray-600 mb-6">Belum ada jurnal emosi. Mari ceritakan perasaan Anda dan dapatkan rekomendasi musik!</p>
+                    {{-- Improved placeholder text --}}
+                    <p class="text-base text-gray-600 mb-6">
+                        Belum ada jurnal emosi. Mari catat perasaan Anda dan dapatkan rekomendasi musik!
+                    </p>
                     <a href="{{ route('rekomendasi') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md mt-auto">
                         Mulai Jurnal & Musik
                     </a>
@@ -102,16 +106,15 @@
             </div>
 
             {{-- COLUMN 3: FITUR CEPAT --}}
-            <div class="lg:col-span-1 bg-white p-6 rounded-2xl  flex flex-col relative transition-all duration-300 hover:shadow-xl hover:scale-[1.005]">
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl flex flex-col relative transition-all duration-300 hover:shadow-xl hover:scale-[1.005]">
                 <span class="absolute top-4 right-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">
                     Akses Cepat
                 </span>
                 <div class="flex items-center gap-4 mb-4 mt-2">
-                    <!-- <img src="{{ asset('icons/icon-new.png') }}" alt="Fitur Cepat" class="w-14 h-14 sm:w-16 sm:h-16 object-contain"> -->
+                    {{-- Removed the commented-out image, as it's not present in the new design --}}
                     <h2 class="text-2xl font-bold text-gray-900">Fitur Cepat Lainnya</h2>
                 </div>
-                {{-- Grid for quick tools, adjusted for 1/3 column width --}}
-                <div class="grid grid-cols-2 gap-3 justify-items-center flex-grow overflow-y-auto custom-scrollbar pr-1"> {{-- Added custom-scrollbar and pr-1 for scrollbar if needed --}}
+                <div class="grid grid-cols-2 gap-3 justify-items-center flex-grow overflow-y-auto custom-scrollbar pr-1">
                     @php
                         $quickTools = [
                             ['icon' => asset('icons/icon-kuesioner.png'), 'title' => 'Isi PANAS', 'route' => route('panas.show')],
@@ -119,9 +122,9 @@
                             ['icon' => asset('icons/icon-history.png'), 'title' => 'Riwayat Mood', 'route' => route('panas.history')],
                             ['icon' => asset('icons/icon-music.png'), 'title' => 'Rekomendasi Musik', 'route' => route('rekomendasi')],
                             ['icon' => asset('icons/icon-education.png'), 'title' => 'Baca Artikel', 'route' => route('artikel.index')],
-                            // Add more quick tools as needed. They will create a scrollbar if they overflow.
-                            ['icon' => asset('icons/icon-journal.png'), 'title' => 'Riwayat Jurnal', 'route' => route('rekomendasi')], // Example: assuming rekomendasi page lists all journals
-                            //['icon' => asset('icons/icon-chart.png'), 'title' => 'Analisis Mood', 'route' => '#'], // Placeholder for future feature
+                            ['icon' => asset('icons/icon-journal.png'), 'title' => 'Riwayat Jurnal', 'route' => route('rekomendasi')],
+                            // You can uncomment or add more here if needed.
+                            // ['icon' => asset('icons/icon-chart.png'), 'title' => 'Analisis Mood', 'route' => '#'],
                         ];
                     @endphp
 
@@ -134,7 +137,7 @@
                 </div>
             </div>
 
-        </div> {{-- END OF MAIN TOP CONTAINER --}}
+        </div>
     </div>
 </section>
 
