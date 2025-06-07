@@ -150,90 +150,90 @@
 </div>
 
 {{-- Link Chart.js CDN --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
 {{-- Link Font Awesome untuk ikon eksternal link --}}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
 
 
 <script>
     // Script untuk Chart.js
-    document.addEventListener('DOMContentLoaded', function() {
-        const emotionCounts = @json($emotionCounts); // Ambil data dari Controller
+//     document.addEventListener('DOMContentLoaded', function() {
+//         const emotionCounts = @json($emotionCounts); // Ambil data dari Controller
 
-        const labels = Object.keys(emotionCounts);
-        const data = Object.values(emotionCounts);
+//         const labels = Object.keys(emotionCounts);
+//         const data = Object.values(emotionCounts);
 
-        // Definisikan warna yang konsisten untuk setiap emosi
-        const backgroundColors = {
-            'Senang': 'rgba(255, 205, 86, 0.8)', // Kuning
-            'Sedih': 'rgba(54, 162, 235, 0.8)',  // Biru
-            'Marah': 'rgba(255, 99, 132, 0.8)',  // Merah
-            'Cemas': 'rgba(75, 192, 192, 0.8)'   // Hijau kebiruan
-        };
+//         // Definisikan warna yang konsisten untuk setiap emosi
+//         const backgroundColors = {
+//             'Senang': 'rgba(255, 205, 86, 0.8)', // Kuning
+//             'Sedih': 'rgba(54, 162, 235, 0.8)',  // Biru
+//             'Marah': 'rgba(255, 99, 132, 0.8)',  // Merah
+//             'Cemas': 'rgba(75, 192, 192, 0.8)'   // Hijau kebiruan
+//         };
 
-        const borderColors = {
-            'Senang': 'rgba(255, 205, 86, 1)',
-            'Sedih': 'rgba(54, 162, 235, 1)',
-            'Marah': 'rgba(255, 99, 132, 1)',
-            'Cemas': 'rgba(75, 192, 192, 1)'
-        };
+//         const borderColors = {
+//             'Senang': 'rgba(255, 205, 86, 1)',
+//             'Sedih': 'rgba(54, 162, 235, 1)',
+//             'Marah': 'rgba(255, 99, 132, 1)',
+//             'Cemas': 'rgba(75, 192, 192, 1)'
+//         };
 
-        // Buat array warna sesuai urutan label
-        const chartBackgroundColors = labels.map(label => backgroundColors[label]);
-        const chartBorderColors = labels.map(label => borderColors[label]);
+//         // Buat array warna sesuai urutan label
+//         const chartBackgroundColors = labels.map(label => backgroundColors[label]);
+//         const chartBorderColors = labels.map(label => borderColors[label]);
 
-        // Cek apakah ada data untuk digambar
-        const totalEntries = data.reduce((sum, current) => sum + current, 0);
+//         // Cek apakah ada data untuk digambar
+//         const totalEntries = data.reduce((sum, current) => sum + current, 0);
 
-        if (totalEntries > 0) {
-            const ctx = document.getElementById('emotionChart');
+//         if (totalEntries > 0) {
+//             const ctx = document.getElementById('emotionChart');
 
-            new Chart(ctx, {
-                type: 'doughnut', // Bisa juga 'pie' atau 'bar'
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Jumlah Catatan',
-                        data: data,
-                        backgroundColor: chartBackgroundColors,
-                        borderColor: chartBorderColors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false, // Penting untuk mengontrol ukuran dengan max-h-64
-                    plugins: {
-                        legend: {
-                            position: 'right', // Letakkan legend di kanan
-                            labels: {
-                                font: {
-                                    size: 14 // Ukuran font legend
-                                }
-                            }
-                        },
-                        title: {
-                            display: false, // Judul sudah ada di H3
-                            text: 'Distribusi Emosi'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed !== null) {
-                                        label += context.parsed;
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    });
-</script>
+//             new Chart(ctx, {
+//                 type: 'doughnut', // Bisa juga 'pie' atau 'bar'
+//                 data: {
+//                     labels: labels,
+//                     datasets: [{
+//                         label: 'Jumlah Catatan',
+//                         data: data,
+//                         backgroundColor: chartBackgroundColors,
+//                         borderColor: chartBorderColors,
+//                         borderWidth: 1
+//                     }]
+//                 },
+//                 options: {
+//                     responsive: true,
+//                     maintainAspectRatio: false, // Penting untuk mengontrol ukuran dengan max-h-64
+//                     plugins: {
+//                         legend: {
+//                             position: 'right', // Letakkan legend di kanan
+//                             labels: {
+//                                 font: {
+//                                     size: 14 // Ukuran font legend
+//                                 }
+//                             }
+//                         },
+//                         title: {
+//                             display: false, // Judul sudah ada di H3
+//                             text: 'Distribusi Emosi'
+//                         },
+//                         tooltip: {
+//                             callbacks: {
+//                                 label: function(context) {
+//                                     let label = context.label || '';
+//                                     if (label) {
+//                                         label += ': ';
+//                                     }
+//                                     if (context.parsed !== null) {
+//                                         label += context.parsed;
+//                                     }
+//                                     return label;
+//                                 }
+//                             }
+//                         }
+//                     }
+//                 }
+//             });
+//         }
+//     });
+// </script>
 @endsection
