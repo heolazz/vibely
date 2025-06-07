@@ -76,8 +76,8 @@
                 <span class="absolute top-4 right-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">
                     Jurnal
                 </span>
-                <div class="flex flex-col items-center mb-4 mt-2">
-                    <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="w-28 h-28 sm:w-36 sm:h-36 object-contain mb-3">
+                <div class="flex flex-col items-center mb-4 mt-6">
+                    <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="w-26 h-26 sm:w-32 sm:h-32 object-contain mb-3">
                     <h2 class="text-2xl font-bold text-gray-900">Jurnal Emosi Anda</h2>
                 </div>
 
