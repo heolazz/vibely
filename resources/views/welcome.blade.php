@@ -41,28 +41,35 @@
         <!-- Hero Section -->
         <section class="min-h-screen flex flex-col items-center justify-center px-4 text-center -mt-10 py-20">
             <div class="bg-white border border-gray-200 rounded-3xl p-10 max-w-4xl text-center shadow-xl">
-                <h2 class="text-5xl font-extrabold mb-6 text-black">Kesehatan Mentalmu Berharga 💙</h2>
+                <h2 class="text-5xl font-extrabold mb-6 text-black">Kesehatan Mentalmu Berharga</h2>
                 <p class="text-lg text-gray-700 mb-6">Kelola emosimu, catat suasana hatimu, dan temukan musik yang menenangkan jiwamu.</p>
                 <div class="flex justify-center gap-4 mb-8">
                     <a href="{{ route('login') }}" class="bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition">Masuk</a>
                     <a href="#artikel" class="border border-black text-black px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition">Jelajahi</a>
                 </div>
 
-                <!-- 3 Fitur -->
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-gray-50 p-4 rounded-xl shadow">
-                        <h3 class="text-xl font-semibold text-black mb-2">Jurnal Emosi</h3>
-                        <p class="text-gray-600 text-sm">Catat perasaan dan pikiranmu setiap hari untuk pemahaman yang lebih baik.</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-xl shadow">
-                        <h3 class="text-xl font-semibold text-black mb-2">Pelacak Mood</h3>
-                        <p class="text-gray-600 text-sm">Pantau perubahan suasana hati dan temukan pola emosionalmu.</p>
-                    </div>
-                    <div class="bg-gray-50 p-4 rounded-xl shadow">
-                        <h3 class="text-xl font-semibold text-black mb-2">Rekomendasi Musik</h3>
-                        <p class="text-gray-600 text-sm">Temukan musik yang sesuai dengan moodmu untuk meningkatkan suasana hati.</p>
-                    </div>
-                </div>
+<div class="grid md:grid-cols-4  gap-4">
+    <div class="bg-gray-50 p-3 rounded-xl shadow flex flex-col items-center text-center">
+        <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi Icon" class="w-12 h-12 mb-2">
+        <h3 class="text-lg font-semibold text-black mb-1">Jurnal Emosi</h3>
+        <p class="text-gray-600 text-sm">Catat perasaan dan pikiranmu setiap hari untuk pemahaman yang lebih baik.</p>
+    </div>
+    <div class="bg-gray-50 p-3 rounded-xl shadow flex flex-col items-center text-center">
+        <img src="{{ asset('icons/icon-kuesioner.png') }}" alt="Pelacak Mood Icon" class="w-12 h-12 mb-2">
+        <h3 class="text-lg font-semibold text-black mb-1">Pelacak Mood Mingguan</h3>
+        <p class="text-gray-600 text-sm">Pantau perubahan suasana hati mingguanmu dengan kuesioner singkat.</p>
+    </div>
+    <div class="bg-gray-50 p-3 rounded-xl shadow flex flex-col items-center text-center">
+        <img src="{{ asset('icons/icon-music.png') }}" alt="Rekomendasi Musik Icon" class="w-12 h-12 mb-2">
+        <h3 class="text-lg font-semibold text-black mb-1">Rekomendasi Musik</h3>
+        <p class="text-gray-600 text-sm">Temukan musik yang sesuai dengan moodmu untuk meningkatkan suasana hati.</p>
+    </div>
+    <div class="bg-gray-50 p-3 rounded-xl shadow flex flex-col items-center text-center">
+        <img src="{{ asset('icons/icon-education.png') }}" alt="Konten Edukasi Icon" class="w-12 h-12 mb-2">
+        <h3 class="text-lg font-semibold text-black mb-1">Konten Edukasi</h3>
+        <p class="text-gray-600 text-sm">Akses artikel dan sumber daya untuk memperdalam pemahaman kesehatan mentalmu.</p>
+    </div>
+</div>
             </div>
         </section>
     </div>
@@ -164,10 +171,10 @@
     <h2 class="text-3xl font-bold text-center text-black dark:text-white mb-10">Artikel Seputar Kesehatan Mental</h2>
     <div class="grid md:grid-cols-3 gap-8">
       @foreach ($articles as $article)
-        <a href="{{ route('artikel.show', $article->id) }}" class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 block">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 block">
           <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
           <p class="text-sm text-gray-600 dark:text-gray-400">{{ $article->excerpt }}</p>
-        </a>
+        </div>
       @endforeach
     </div>
   </div>
