@@ -10,8 +10,7 @@
         }
     </style>
 
-    {{-- Perubahan di sini: Tambahkan mx-2 dan sm:mx-auto --}}
-    <div class="max-w-3xl py-6 px-6 bg-white bg-opacity-90 backdrop-blur-md rounded-[2.5rem] shadow-xl border-4 border-white mx-2 sm:mx-auto">
+    <div class="max-w-3xl py-6 px-6 bg-white bg-opacity-90 backdrop-blur-md rounded-[2.5rem] shadow-xl border-4 border-white mx-3 sm:mx-auto">
         <div class="text-center mb-6">
             <img src="/images/gif/cat-greeting.gif" class="mx-auto w-28 h-28 drop-shadow-[0_4px_10px_rgba(96,165,250,0.4)]" alt="Maskot">
             <h1 class="text-4xl font-extrabold text-[#3b82f6] drop-shadow-sm">💙 Kuesioner PANAS Mingguan</h1>
