@@ -125,6 +125,8 @@ Route::delete('/emotion/{id}', [RekomendasiController::class, 'destroyEmotion'])
 
 Route::get('/panas/history', [PANASController::class, 'history'])->name('panas.history');
 
+Route::get('/panas/history/{id}', [PanasController::class, 'showResultDetail'])->name('panas.result_detail');
+
 Route::get('/', [ArticleController::class, 'index']);
 
 // Bisa diakses oleh siapapun

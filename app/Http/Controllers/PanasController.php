@@ -127,11 +127,10 @@ private function determineMood($pa, $na)
 {
     $user = Auth::user();
 
-    // Ambil semua hasil kuesioner untuk pengguna ini, urutkan berdasarkan tanggal terbaru
-    $history = PanasResult::where('user_id', $user->id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+   $history = PanasResult::where('user_id', Auth::id())
+                            ->latest() // Urutkan dari yang terbaru
+                            ->paginate(6); // Misalnya, 6 hasil per halaman
 
-    return view('panas.history', compact('history'));
+        return view('panas.history', compact('history'));
 }
 }
