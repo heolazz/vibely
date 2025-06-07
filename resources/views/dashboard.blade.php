@@ -77,7 +77,7 @@
                     Jurnal
                 </span>
                 <div class="flex flex-col items-center mb-4 mt-6">
-                    <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="w-26 h-26 sm:w-32 sm:h-32 object-contain mb-3">
+                    <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="w-28 h-28 sm:w-36 sm:h-36 object-contain mb-3">
                     <h2 class="text-2xl font-bold text-gray-900">Jurnal Emosi Anda</h2>
                 </div>
 
