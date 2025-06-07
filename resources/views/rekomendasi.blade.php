@@ -4,11 +4,9 @@
 <div class="bg-cover bg-center min-h-screen py-12" style="background-image: url('{{ asset('images/bg-kuiz.jpg') }}');"> {{-- Perhatikan: bg-kuiz.jpg --}}
     {{-- Kontainer utama: Default px-4, sm:px-6 (tablet), lg:px-8 (desktop) untuk spasi yang lebih baik --}}
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        {{-- Menggunakan div dengan backdrop-blur untuk membuat teks lebih terlihat --}}
-        <div class="mb-8 p-4 bg-white bg-opacity-10 backdrop-blur-sm rounded-lg mx-auto max-w-fit shadow-lg">
-            <h1 class="text-3xl font-bold text-center text-white drop-shadow-lg">Temukan Musik Untuk Emosimu </h1>
-        </div>
-
+        
+        <h1 class="text-3xl mb-4 font-bold text-center text-white drop-shadow-lg">Temukan Musik Untuk Emosimu </h1>
+            
         <div class="grid md:grid-cols-3 gap-8">
             <div class="md:col-span-2 space-y-6">
                 <form action="{{ url('/rekomendasi') }}" method="POST" class="bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-lg shadow-md">
@@ -116,7 +114,7 @@
                 {{-- AKHIR Tombol filter untuk riwayat --}}
 
                 {{-- Bagian Grafik Emosi --}}
-                <div class="mb-6">
+                <div class="mb-2">
                     <h3 class="text-lg font-semibold text-gray-700 mb-2">Ringkasan Emosi Kamu</h3>
                     @if(collect($emotionCounts)->sum() > 0) {{-- Hanya tampilkan jika ada data --}}
                         {{-- Container baru untuk canvas Chart.js dengan ukuran eksplisit --}}
