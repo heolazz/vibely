@@ -137,3 +137,18 @@ Route::get('/artikel/{article}', [ArticleController::class, 'show'])->name('arti
 // Route for the "All Articles" page
 Route::get('/articles', [ArticleController::class, 'allArticles'])->name('artikel.index');
 Route::get('/artikel', [ArticleController::class, 'filterByCategory'])->name('artikel.index');
+
+
+    
+// Rute untuk halaman utama rekomendasi (dengan filter opsional)
+Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi');
+
+// Rute untuk menyimpan catatan emosi dan merekomendasikan musik
+Route::post('/rekomendasi', [RekomendasiController::class, 'filter']);
+
+// Rute untuk menampilkan detail catatan emosi tertentu
+Route::get('/rekomendasi/history/{id}', [RekomendasiController::class, 'show'])->name('emotion.show');
+
+// Rute untuk menghapus catatan emosi
+Route::delete('/emotion-notes/{id}', [RekomendasiController::class, 'destroyEmotion'])->name('emotion.destroy');
+
