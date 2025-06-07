@@ -8,82 +8,158 @@
     @endphp
 @else
 
-<section class="bg-gradient-to-br from-white to-gray-100 py-14 sm:py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-        <h1 class="text-3xl sm:text-4xl md::text-5xl font-bold text-gray-900 tracking-tight">
-            Selamat datang di <span class="text-indigo-600">Vibely</span>
+<section class="bg-white py-8 sm:py-10 min-h-screen flex flex-col justify-center"> {{-- bg-white untuk keseluruhan, min-h-screen dan flex untuk centering vertikal --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center"> {{-- w-full dan flex-grow untuk mengisi ruang --}}
+        <h1 class="text-3xl sm:text-4xl md:text-4xl font-extrabold text-gray-900 tracking-tight text-center mb-8">
+            Selamat datang kembali, <span class="text-blue-600">{{ Auth::user()->name }}</span> 👋
         </h1>
-        <p class="mt-4 text-base sm:text-lg text-gray-700 max-w-2xl mx-auto">
-            Dukung kesehatan mentalmu dengan fitur reflektif dan konten yang menenangkan.
-        </p>
 
-        <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
-            <div class="bg-white p-6 rounded-2xl text-center shadow hover:shadow-md transition duration-300 border border-gray-200">
-                <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="mx-auto w-10 h-10">
-                <h3 class="font-semibold text-lg text-gray-900 mt-4">Jurnal Emosi</h3>
-                <p class="text-gray-600 text-sm mt-2">Refleksikan perasaanmu setiap hari untuk mengenal diri lebih dalam.</p>
+        {{-- MAIN TOP CONTAINER: MOOD, JURNAL, FITUR CEPAT --}}
+        {{-- Hapus bg-white pembungkus utama, biarkan kartu individual pakai bg-white --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 flex-grow items-center"> {{-- Gap lebih kecil, items-center untuk alignment vertikal --}}
+
+            {{-- KIRI: CARD MOOD TERAKHIR (PANAS) - Takes 1/3 width --}}
+            <div class="lg:col-span-1 bg-white p-6 rounded-2xl flex flex-col justify-between items-center text-center relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.005] h-full"> {{-- Padding lebih kecil, shadow lebih ringan, h-full untuk tinggi --}}
+                <span class="absolute top-4 right-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                    Mood
+                </span>
+                <div class="flex flex-col items-center mb-4 mt-2">
+                    <img src="{{ $moodImage }}" alt="Mood Sticker" class="w-28 h-28 sm:w-36 sm:h-36 object-contain mb-3 animate-float-slow"> {{-- Ukuran ikon sedikit diperkecil --}}
+                    <h2 class="text-2xl font-bold text-gray-900">Mood Terakhir Anda</h2> {{-- Ukuran font lebih kecil --}}
+                </div>
+
+                @if($latestPanasResult)
+                    <p class="text-xl text-blue-600 font-semibold mb-2">{{ $moodText }}</p> {{-- Ukuran font lebih kecil --}}
+                    <p class="text-xs text-gray-500 mb-4">Diperbarui: {{ $latestPanasResult->created_at->isoFormat('DD MMMM YYYY') }}</p>
+
+                    {{-- Recommended Music based on Mood --}}
+                    @if($recommendedMoodSong)
+                        <a href="{{ $recommendedMoodSong->url }}" target="_blank" class="block w-full text-left p-2 bg-blue-50 rounded-lg mb-4 border border-blue-100 transition-all duration-300 hover:bg-blue-100 hover:shadow-sm cursor-pointer"> {{-- Padding lebih kecil --}}
+                            <p class="text-xs font-semibold text-blue-700 mb-1">Musik untuk Mood Ini:</p> {{-- Ukuran font lebih kecil --}}
+                            <div class="flex items-center">
+                                @if($recommendedMoodSong->album_cover)
+                                    <img src="{{ $recommendedMoodSong->album_cover }}" alt="Album Cover" class="w-8 h-8 rounded-md mr-2 object-cover shadow-sm"> {{-- Ukuran ikon lebih kecil --}}
+                                @else
+                                    <div class="w-8 h-8 rounded-md bg-blue-200 flex items-center justify-center mr-2 text-blue-600 text-sm shadow-sm">🎶</div>
+                                @endif
+                                <div class="flex-grow">
+                                    <p class="text-sm font-medium text-gray-800 truncate">{{ $recommendedMoodSong->title }}</p>
+                                    <p class="text-xs text-gray-600 truncate">oleh {{ $recommendedMoodSong->artist }}</p>
+                                </div>
+                                <span class="ml-2 text-blue-500 hover:text-blue-700 text-base flex-shrink-0">
+                                    ▶️
+                                </span>
+                            </div>
+                        </a>
+                    @else
+                        <p class="text-xs text-gray-500 mb-4 italic">Belum ada rekomendasi musik spesifik untuk mood ini.</p>
+                    @endif
+
+                    @if(!$hasFilledPanasThisWeek)
+                        <a href="{{ route('panas.show') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md mt-auto"> {{-- Padding & font lebih kecil --}}
+                            Isi Kuesioner Mingguan
+                        </a>
+                    @else
+                        <p class="text-base text-gray-700 mb-2 mt-auto">Anda sudah mengisi minggu ini!</p>
+                        <a href="{{ route('panas.result') }}" class="text-blue-500 hover:underline text-xs">Lihat Hasil Detail Mood</a>
+                    @endif
+                @else
+                    <p class="text-base text-gray-600 mb-6">Belum ada data mood. Ayo isi kuesioner pertama Anda!</p>
+                    <a href="{{ route('panas.show') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md mt-auto">
+                        Mulai Kuesioner Mood
+                    </a>
+                @endif
+                <a href="{{ route('panas.history') }}" class="mt-3 text-blue-500 hover:underline text-xs">Riwayat Mood Saya</a> {{-- Margin lebih kecil --}}
             </div>
-            <div class="bg-white p-6 rounded-2xl text-center shadow hover:shadow-md transition duration-300 border border-gray-200">
-                <img src="{{ asset('icons/icon-music.png') }}" alt="Rekomendasi Musik" class="mx-auto w-10 h-10">
-                <h3 class="font-semibold text-lg text-gray-900 mt-4">Rekomendasi Musik</h3>
-                <p class="text-gray-600 text-sm mt-2">Temukan musik sesuai suasana hatimu untuk menenangkan atau menyemangati hari.</p>
-            </div>
-            <div class="bg-white p-6 rounded-2xl text-center shadow hover:shadow-md transition duration-300 border border-gray-200">
-                <img src="{{ asset('icons/icon-education.png') }}" alt="Edukasi Mental Health" class="mx-auto w-10 h-10">
-                <h3 class="font-semibold text-lg text-gray-900 mt-4">Edukasi Mental Health</h3>
-                <p class="text-gray-600 text-sm mt-2">Pelajari cara menjaga pikiran tetap sehat dengan konten berkualitas.</p>
-            </div>
-        </div>
-    </div>
+
+            {{-- KANAN: JURNAL & FITUR CEPAT - Takes 2/3 width --}}
+            <div class="lg:col-span-2 grid grid-cols-1 gap-6 h-full"> {{-- Nested grid for Jurnal and Quick Tools, h-full --}}
+
+                {{-- KANAN ATAS: CARD JURNAL EMOSI & MUSIK --}}
+                <div class="bg-white p-6 rounded-2xl flex flex-col justify-between relative text-center transition-all duration-300 hover:shadow-xl hover:scale-[1.005] flex-grow"> {{-- Padding lebih kecil, flex-grow untuk mengisi ruang --}}
+                    <span class="absolute top-4 right-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                        Jurnal
+                    </span>
+                    <div class="flex flex-col items-center mb-4 mt-2">
+                        <img src="{{ asset('icons/icon-journal.png') }}" alt="Jurnal Emosi" class="w-28 h-28 sm:w-36 sm:h-36 object-contain mb-3">
+                        <h2 class="text-2xl font-bold text-gray-900">Jurnal Emosi Anda</h2>
+                    </div>
+
+                    @if($latestMoodNote)
+                        <p class="text-xl text-blue-600 font-semibold mb-2">
+                            Terakhir merasa: <span class="font-bold">{{ $latestMoodNote->emotion }}</span>
+                        </p>
+                        <p class="text-sm text-gray-600 italic mb-4 max-w-sm truncate mx-auto">
+                            "{{ Str::limit($latestMoodNote->note, 100) }}"
+                        </p>
+                        <p class="text-xs text-gray-500 mb-4">Dicatat {{ $latestMoodNote->created_at->diffForHumans() }}</p>
+                        <a href="{{ route('rekomendasi') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md mt-auto">
+                            Buat Jurnal Baru & Dengar Musik
+                        </a>
+                        <a href="{{ route('emotion.show', $latestMoodNote->id) }}" class="mt-3 text-blue-500 hover:underline text-xs">Lihat Detail Jurnal Ini</a>
+                    @else
+                        <p class="text-base text-gray-600 mb-6">Belum ada jurnal emosi. Mari ceritakan perasaan Anda dan dapatkan rekomendasi musik!</p>
+                        <a href="{{ route('rekomendasi') }}" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md mt-auto">
+                            Mulai Jurnal & Musik
+                        </a>
+                    @endif
+                </div>
+
+                {{-- KANAN BAWAH: FITUR CEPAT --}}
+                <div class="bg-white p-6 rounded-2xl flex flex-col relative flex-grow"> {{-- Padding lebih kecil, flex-grow --}}
+                    <span class="absolute top-4 right-4 text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                        Akses Cepat
+                    </span>
+                    <div class="flex items-center gap-4 mb-4 mt-2">
+                        <!-- <img src="{{ asset('icons/icon-new.png') }}" alt="Fitur Cepat" class="w-14 h-14 sm:w-16 sm:h-16 object-contain"> {{-- Ukuran ikon diperkecil --}} -->
+                        <h2 class="text-2xl font-bold text-gray-900">Fitur Cepat Lainnya</h2> {{-- Ukuran font lebih kecil --}}
+                    </div>
+                    {{-- Grid for quick tools, now more compact to fit 2/3 width --}}
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 justify-items-center"> {{-- Gap lebih kecil --}}
+                        @php
+                            $quickTools = [
+                                ['icon' => asset('icons/icon-kuesioner.png'), 'title' => 'Isi PANAS', 'route' => route('panas.show')],
+                                ['icon' => asset('icons/icon-new.png'), 'title' => 'Hasil PANAS', 'route' => route('panas.result')],
+                                ['icon' => asset('icons/icon-history.png'), 'title' => 'Riwayat Mood', 'route' => route('panas.history')],
+                                ['icon' => asset('icons/icon-music.png'), 'title' => 'Rekomendasi Musik', 'route' => route('rekomendasi')],
+                                ['icon' => asset('icons/icon-education.png'), 'title' => 'Baca Artikel', 'route' => route('artikel.index')],
+                                // Add more quick tools as needed, they will wrap automatically
+                            ];
+                        @endphp
+
+                        @foreach($quickTools as $tool)
+                            <a href="{{ $tool['route'] }}" class="flex flex-col items-center justify-center p-2 w-full h-24 bg-gray-50 rounded-lg border border-gray-100 transition-all duration-300 hover:bg-blue-50 hover:border-blue-200 group text-center shadow-sm hover:shadow-md"> {{-- Padding & height lebih kecil --}}
+                                <img src="{{ $tool['icon'] }}" alt="{{ $tool['title'] }}" class="w-10 h-10 mb-1 group-hover:scale-110 transition-transform"> {{-- Ukuran ikon lebih kecil --}}
+                                <p class="text-xs font-semibold text-gray-800 group-hover:text-blue-700">{{ $tool['title'] }}</p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+
+            </div> {{-- End of KANAN: JURNAL & FITUR CEPAT --}}
+
+        </div> {{-- END OF MAIN TOP CONTAINER --}}
+    </div> {{-- End of max-w-7xl --}}
 </section>
 
-<section class="bg-white py-12 sm:py-16">
-    <div class="max-w-5xl mx-auto px-4 text-center">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Hai, {{ Auth::user()->name }} 👋</h2>
-        <p class="text-base sm:text-lg text-gray-600 mt-2">
-            Senang melihatmu kembali. Yuk rawat suasana hatimu hari ini bersama <span class="font-semibold text-indigo-600">Vibely</span>.
-        </p>
-        <blockquote class="italic text-gray-500 mt-6 max-w-xl mx-auto text-sm sm:text-base">
-            "Kesehatan mental bukan tujuan, tapi proses. Ini tentang bagaimana kamu mengemudikan, bukan ke mana kamu pergi."
-        </blockquote>
-    </div>
-
-    <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-5xl mx-auto px-4">
-        @php
-            $tools = [
-                ['icon' => asset('icons/icon-kuesioner.png'), 'title' => 'Isi Kuesioner PANAS', 'desc' => 'Nilai mood kamu hari ini dengan 20 pertanyaan sederhana dan reflektif.', 'route' => route('panas.show')],
-                ['icon' => asset('icons/icon-new.png'), 'title' => 'Hasil Terbaru', 'desc' => 'Lihat skor PA, NA, dan interpretasi suasana hatimu secara instan.', 'route' => route('panas.result')],
-                ['icon' => asset('icons/icon-history.png'), 'title' => 'Riwayat Kuesioner', 'desc' => 'Lihat perkembangan mood kamu dari waktu ke waktu.', 'route' => route('panas.history')],
-                ['icon' => asset('icons/icon-music.png'), 'title' => 'Rekomendasi Musik', 'desc' => 'Temukan musik yang cocok untuk menenangkan atau menyemangati harimu.', 'route' => route('rekomendasi')],
-            ];
-        @endphp
-
-        @foreach ($tools as $tool)
-        <a href="{{ $tool['route'] }}" class="block bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-2xl p-5 sm:p-6 shadow-sm hover:shadow-md hover:scale-[1.02] transition duration-300">
-            <div class="flex items-start gap-3 mb-3">
-                <img src="{{ $tool['icon'] }}" alt="{{ $tool['title'] }}" class="w-6 h-6 mt-1">
-                <h2 class="text-base sm:text-xl font-semibold text-gray-800">{{ $tool['title'] }}</h2>
-            </div>
-            <p class="text-sm sm:text-base text-gray-600">{{ $tool['desc'] }}</p>
-        </a>
-        @endforeach
-    </div>
-</section>
-
-<section class="bg-gray-20 py-4 pb-14">
-    <div class="container mx-auto px-4 max-w-6xl mt-16">
-        <h2 class="text-3xl font-bold text-center text-black dark:text-white mb-10">Artikel Seputar Kesehatan Mental</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-            @foreach ($articles as $article)
-                <a href="{{ route('artikel.show', $article->id) }}" class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 block">
-                    <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $article->excerpt }}</p>
+{{-- LIST ARTIKEL - Full Width Section Below --}}
+{{-- Pindahkan Artikel ke section terpisah di luar area min-h-screen --}}
+<section class="bg-white py-10 sm:py-14"> {{-- Background berbeda agar terpisah dari hero --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-8">Artikel Seputar Kesehatan Mental</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse ($articles as $article)
+                <a href="{{ route('artikel.show', $article->id) }}" class="block p-4 bg-white rounded-xl border border-gray-100 transition-all duration-300 hover:bg-blue-50 hover:border-blue-200 shadow-sm hover:shadow-md">
+                    <h3 class="font-semibold text-lg text-gray-900 mb-2">{{ $article->title }}</h3>
+                    <p class="text-sm text-gray-700 mb-3">{{ Str::limit($article->excerpt, 150) }}</p>
+                    <span class="text-xs text-blue-600 hover:underline font-medium">Baca Selengkapnya &rarr;</span>
                 </a>
-            @endforeach
+            @empty
+                <p class="md:col-span-3 text-center text-gray-600 italic py-6">Belum ada artikel yang tersedia saat ini.</p>
+            @endforelse
         </div>
-        {{-- Add the "Lihat Semua Artikel" button here --}}
         <div class="text-center mt-10">
-            <a href="{{ route('artikel.index') }}" class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-md">
+            <a href="{{ route('artikel.index') }}" class="inline-block bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300 shadow-lg">
                 Lihat Semua Artikel
             </a>
         </div>
