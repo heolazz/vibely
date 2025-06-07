@@ -69,7 +69,7 @@
 
                             {{-- Link Lihat Detail --}}
                             <div class="mt-6 text-right">
-                                <a href="{{ route('panas.result_detail', $result->id) }}" class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+                               <a href="{{ route('panas.result_detail', $result->id) }}" class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
                                     Lihat Detail
                                     <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </a>

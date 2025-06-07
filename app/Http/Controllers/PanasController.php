@@ -2,135 +2,173 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PanasQuestion;
 use App\Models\PanasResult;
+use App\Models\MoodSong;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Carbon;
-use App\Models\MoodSong;
+use Illuminate\Support\Str; // Needed for Str::headline
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
-class PANASController extends Controller
+class PanasController extends Controller
 {
-    public function show()
+    /**
+     * Display the PANAS questionnaire form.
+     * Checks if the user has filled it this week to control access.
+     */
+    public function show() // <-- PASTIKAN METODE INI ADA DAN PUBLIC
     {
-        $user = Auth::user();
-    
-        // buat Cek apakah user sudah mengisi minggu ini
-        $latestResult = PanasResult::where('user_id', $user->id)
-            ->whereBetween('created_at', [
-                now()->startOfWeek(), now()->endOfWeek()
-            ])->first();
-    
-        if ($latestResult) {
-            return view('panas.already_filled', compact('latestResult'));
-        }
-    
-        // buat Ambil emosi
-        $emotions = PanasQuestion::select('emotion', 'type')->distinct()->get();
-    
-        $questions = [];
-    
-        foreach ($emotions as $emo) {
-            $randomQuestion = PanasQuestion::where('emotion', $emo->emotion)
-                ->inRandomOrder()
-                ->first();
-    
-            if ($randomQuestion) {
-                $questions[] = $randomQuestion;
+        // Check if the user has filled out the questionnaire this week (7 days)
+        $latestPanasResult = PanasResult::where('user_id', Auth::id())
+                                        ->latest()
+                                        ->first();
+
+        $hasFilledPanasThisWeek = false;
+        if ($latestPanasResult) {
+            // Check if the last submission was less than 7 days ago
+            if ($latestPanasResult->created_at->gte(now()->subDays(7))) {
+                $hasFilledPanasThisWeek = true;
             }
         }
-    
-        return view('panas.form', compact('questions'));
-    }
-    
 
+        // Pass hasFilledPanasThisWeek to the view to control form display
+        return view('panas.show', compact('hasFilledPanasThisWeek'));
+    }
+
+    /**
+     * Store a newly created PANAS result in storage.
+     */
     public function store(Request $request)
-{
-    // Validasi jika user sudah mengisi semua pertanyaan
-    $request->validate([
-        'responses' => 'required|array',
-        'responses.*' => 'required|integer|between:1,5', // Pastikan jawaban adalah angka 1-5
-    ]);
-
-    $paScore = 0;
-    $naScore = 0;
-
-    foreach ($request->responses as $questionId => $value) {
-        $question = PanasQuestion::find($questionId);
-
-        if ($question) {
-            // Hitung skor PA dan NA berdasarkan jenis pertanyaan
-            if ($question->type === 'positive') {
-                $paScore += (int)$value;
-            } elseif ($question->type === 'negative') {
-                $naScore += (int)$value;
-            }
-        }
-    }
-
-    $moodType = $this->determineMood($paScore, $naScore);
-
-    // Simpan hasil kuesioner ke dalam database
-    PanasResult::create([
-        'user_id' => Auth::id(),
-        'pa_score' => $paScore,
-        'na_score' => $naScore,
-        'mood_type' => $moodType,
-    ]);
-
-     // Ambil rekomendasi musik berdasarkan mood
-     $recommendedSongs = MoodSong::where('mood_type', $moodType)->get();
-
-    // Redirect ke halaman hasil
-    return redirect()->route('panas.result')->with('success', 'Kuesioner berhasil disimpan!');
-}
-
-
-private function determineMood($pa, $na)
-{
-    // Menghitung level PA dan NA
-    $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
-    $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
-
-    // Menentukan tipe mood berdasarkan kombinasi PA dan NA
-    if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
-    if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
-    if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
-    if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
-
-    // Penanganan tambahan untuk kondisi sedang
-    if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
-    if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
-    if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
-    if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
-    if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
-
-    // Default
-    return 'Netral';
-}
-
-
-    public function result()
     {
-        // Ambil hasil kuesioner terbaru
-        $result = PanasResult::where('user_id', Auth::id())
-            ->latest()
-            ->first();
+        // Validate the request data
+        $validatedData = $request->validate([
+            'pa_score' => 'required|integer|min:10|max:50', // Assuming min/max scores
+            'na_score' => 'required|integer|min:10|max:50', // Assuming min/max scores
+        ]);
 
-        // Ambil rekomendasi musik berdasarkan mood
-        $recommendedSongs = session('recommendedSongs', []);
+        $paScore = $validatedData['pa_score'];
+        $naScore = $validatedData['na_score'];
 
-        return view('panas.result', compact('result', 'recommendedSongs'));
+        // Determine mood type using the private helper method
+        $moodType = $this->determineMood($paScore, $naScore);
+
+        // Create and save the PanasResult
+        PanasResult::create([
+            'user_id' => Auth::id(),
+            'pa_score' => $paScore,
+            'na_score' => $naScore,
+            'mood_type' => $moodType,
+        ]);
+
+        // Redirect to the latest result page after submission
+        return redirect()->route('panas.result')->with('success', 'Kuesioner berhasil diisi!');
     }
 
-    public function history()
-{
-    $user = Auth::user();
+    /**
+     * Display the LATEST PANAS result.
+     * This is typically the target after a questionnaire submission.
+     */
+    public function showLatestResult() // Renamed from 'result' for clarity in previous discussions
+    {
+        $result = PanasResult::where('user_id', Auth::id())->latest()->first();
 
-   $history = PanasResult::where('user_id', Auth::id())
-                            ->latest() // Urutkan dari yang terbaru
-                            ->paginate(6); // Misalnya, 6 hasil per halaman
+        if (!$result) {
+            return redirect()->route('panas.show')->with('error', 'Belum ada hasil kuesioner. Silakan isi terlebih dahulu!');
+        }
+
+        // Prepare all data needed for the panas.result view
+        $pa = $result->pa_score;
+        $na = $result->na_score;
+        $total = $pa + $na;
+        $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
+        $naPercent = 100 - $paPercent;
+
+        $radius = 70; // Must match the radius used in your panas.result view
+        $circumference = 2 * M_PI * $radius;
+        $strokePA = $circumference * ($paPercent / 100);
+        $strokeNA = $circumference * ($naPercent / 100);
+        $colorPA = '#2563eb'; // blue-600
+        $colorNA = '#9ca3af'; // gray-400
+
+        $moodText = $this->determineMood($pa, $na);
+        $moodImages = [
+            'Positif' => 'happy-mood.gif',
+            'Negatif' => 'negatif-mood2.gif',
+            'Netral'  => 'netral-mood.gif',
+            'Campuran' => 'mix-mood.gif',
+        ];
+        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
+
+        $recommendedSongs = MoodSong::where('mood_type', $moodText)->get();
+
+        return view('panas.result', compact(
+            'result', 'pa', 'na', 'paPercent', 'naPercent', 'radius', 'circumference',
+            'strokePA', 'strokeNA', 'colorPA', 'colorNA', 'moodText', 'moodImage', 'recommendedSongs'
+        ));
+    }
+
+    /**
+     * Display the user's history of PANAS results with pagination.
+     */
+    public function history()
+    {
+        $history = PanasResult::where('user_id', Auth::id())
+                                ->latest() // Order by latest results
+                                ->paginate(10); // Paginate, e.g., 10 items per page
 
         return view('panas.history', compact('history'));
-}
+    }
+
+    /**
+     * Display a SPECIFIC PANAS result from history in detail.
+     */
+    public function showResultDetail($id)
+    {
+        $result = PanasResult::where('user_id', Auth::id())->findOrFail($id);
+
+        // Prepare all data for the specific result detail view
+        $pa = $result->pa_score;
+        $na = $result->na_score;
+        $total = $pa + $na;
+        $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
+        $naPercent = 100 - $paPercent;
+
+        $radius = 70; // Must match the radius used in your panas.result view
+        $circumference = 2 * M_PI * $radius;
+        $strokePA = $circumference * ($paPercent / 100);
+        $strokeNA = $circumference * ($naPercent / 100);
+        $colorPA = '#2563eb'; // blue-600
+        $colorNA = '#9ca3af'; // gray-400
+
+        $moodText = $this->determineMood($pa, $na);
+        $moodImages = [
+            'Positif' => 'happy-mood.gif',
+            'Negatif' => 'negatif-mood2.gif',
+            'Netral'  => 'netral-mood.gif',
+            'Campuran' => 'mix-mood.gif',
+        ];
+        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
+
+        $recommendedSongs = MoodSong::where('mood_type', $moodText)->get();
+
+        return view('panas.result_detail', compact(
+            'result', 'pa', 'na', 'paPercent', 'naPercent', 'radius', 'circumference',
+            'strokePA', 'strokeNA', 'colorPA', 'colorNA', 'moodText', 'moodImage', 'recommendedSongs'
+        ));
+    }
+
+    /**
+     * Helper function to determine mood type based on PA and NA scores.
+     */
+    private function determineMood($pa, $na) {
+        $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
+        $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
+
+        if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
+        if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
+        if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
+        if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
+
+        return 'Netral';
+    }
 }
