@@ -3,7 +3,7 @@
 @section('content')
 <div class="bg-cover bg-center min-h-screen py-12" style="background-image: url('{{ asset('images/bg-kuiz.jpg') }}');">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-center text-white mb-8 drop-shadow-lg">Detail Catatan Emosi Anda</h1>
+        <h1 class="text-3xl mb-4 font-bold text-center text-white drop-shadow-lg">Detail Catatan Emosi Anda</h1>
 
         <div class="bg-white bg-opacity-90 backdrop-blur-md p-8 rounded-lg shadow-md mb-8">
             <div class="mb-6 border-b pb-4">
@@ -38,16 +38,19 @@
                 @endif
             </div>
 
-            <div class="flex justify-between items-center mt-6">
-                <a href="{{ route('rekomendasi') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-200">
+            {{-- Perbaikan untuk tampilan mobile button --}}
+            <div class="flex flex-col md:flex-row justify-center md:justify-between items-center gap-4 mt-6">
+                <a href="{{ route('rekomendasi') }}"
+                   class="w-full md:w-auto bg-gray-500 hover:bg-gray-700 text-white text-xs font-semibold py-2 px-6 rounded-full shadow-lg transition duration-200 text-center">
                     <i class="fas fa-arrow-left mr-2"></i> Kembali
                 </a>
 
                 {{-- Form untuk menghapus catatan emosi --}}
-                <form action="{{ route('emotion.destroy', $emotionNote->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?');">
+                <form action="{{ route('emotion.destroy', $emotionNote->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus jurnal ini?');"
+                      class="w-full md:w-auto"> {{-- Tambahkan w-full dan md:w-auto pada form juga --}}
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="bg-red-600 hover:bg-red-800 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-200">
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-800 text-white text-xs font-semibold py-2 px-6 rounded-full shadow-lg transition duration-200">
                         <i class="fas fa-trash-alt mr-2"></i> Hapus Jurnal
                     </button>
                 </form>
