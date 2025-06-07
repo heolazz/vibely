@@ -184,14 +184,15 @@ public function storeSong(Request $request)
     $request->validate([
         'judul' => 'required|string|max:255',
         'artist' => 'nullable|string|max:255',
-        'url' => 'nullable|url', // Contoh kalau ada url streaming
-        // tambahkan validasi lain jika perlu
+        'link' => 'nullable|url',
+        'emotion' => 'nullable|string|max:255', 
     ]);
 
     Song::create([
         'judul' => $request->judul,
         'artist' => $request->artist,
-        'url' => $request->url,
+        'link' => $request->link,
+        'emotion' => $request->emotion,
     ]);
 
     return redirect()->route('admin.songs.index')->with('success', 'Lagu berhasil ditambahkan!');
@@ -209,13 +210,15 @@ public function updateSong(Request $request, Song $song)
     $request->validate([
         'judul' => 'required|string|max:255',
         'artist' => 'nullable|string|max:255',
-        'url' => 'nullable|url',
+        'link' => 'nullable|url',
+        'emotion' => 'nullable|string|max:255', 
     ]);
 
     $song->update([
         'judul' => $request->judul,
         'artist' => $request->artist,
-        'url' => $request->url,
+        'link' => $request->link, 
+        'emotion' => $request->emotion, 
     ]);
 
     return redirect()->route('admin.songs.index')->with('success', 'Lagu berhasil diperbarui!');

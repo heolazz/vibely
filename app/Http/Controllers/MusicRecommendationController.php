@@ -7,8 +7,8 @@ use App\Models\Song;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Illuminate\Pagination\LengthAwarePaginator; // Import ini!
-use Illuminate\Support\Collection; // Import ini!
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class MusicRecommendationController extends Controller
 {
@@ -26,13 +26,13 @@ class MusicRecommendationController extends Controller
             'negatif' => 'Negatif',
             'netral' => 'Netral',
             'campuran' => 'Campuran',
-            // 'cenderung-positif' => 'Cenderung Positif', // Pastikan ini dihapus jika tidak digunakan di DB
-            // 'cenderung-negatif' => 'Cenderung Negatif', // Pastikan ini dihapus jika tidak digunakan di DB
             'emosi-rekomendasi' => 'Emosi Rekomendasi',
-            'senang' => 'Senang',
+            'senang' => 'Senang', // Pastikan mapping ini mencerminkan yang ada di DB, atau biarkan Str::headline yang menanganinya
             'sedih' => 'Sedih',
             'marah' => 'Marah',
             'cemas' => 'Cemas',
+            'semangat' => 'Semangat', // Tambahkan jika ada slug untuk ini
+            'tenang' => 'Tenang',     // Tambahkan jika ada slug untuk ini
         ];
 
         $dbCategoryToFilter = null;
@@ -41,6 +41,7 @@ class MusicRecommendationController extends Controller
             if (array_key_exists($selectedSlug, $categorySlugToDbNameMap)) {
                 $dbCategoryToFilter = $categorySlugToDbNameMap[$selectedSlug];
             } else {
+                // Ini akan mengubah "senang" menjadi "Senang"
                 $dbCategoryToFilter = Str::headline(str_replace('-', ' ', $selectedSlug));
             }
         }
@@ -48,7 +49,7 @@ class MusicRecommendationController extends Controller
         // --- Langkah 1: Ambil semua data yang relevan sebelum paginasi ---
         $moodSongs = MoodSong::all()->map(function($song) {
             $song->category_type = 'Mood Rekomendasi';
-            $song->category_value = $song->mood_type;
+            $song->category_value = $song->mood_type; // Mood type harusnya sudah sesuai case di DB
             $song->display_title = $song->title;
             $song->display_artist = $song->artist;
             $song->display_url = $song->url;
@@ -58,11 +59,11 @@ class MusicRecommendationController extends Controller
 
         $emotionSongs = Song::all()->map(function($song) {
             $song->category_type = 'Emosi Rekomendasi';
-            $song->category_value = $song->emotion;
-            $song->display_title = $song->judul; // judul dari model Song
-            $song->display_artist = $song->artist; // artist dari model Song
-            $song->display_url = $song->link; // link dari model Song
-            $song->display_cover = $song->album_cover; // album_cover dari model Song
+            $song->category_value = $song->emotion; // Ini nilai emotion dari DB
+            $song->display_title = $song->judul;
+            $song->display_artist = $song->artist;
+            $song->display_url = $song->link;
+            $song->display_cover = $song->album_cover; // Sesuaikan jika ini dari MoodSong saja
             return $song;
         });
 
@@ -70,13 +71,18 @@ class MusicRecommendationController extends Controller
 
         // Lakukan filtering berdasarkan $dbCategoryToFilter pada KOLEKSI ini
         if ($dbCategoryToFilter) {
-            $allSongs = $allSongs->filter(function ($song) use ($dbCategoryToFilter) {
-                return $song->category_type === $dbCategoryToFilter || $song->category_value === $dbCategoryToFilter;
+            // Konversi nilai filter dan nilai dari koleksi ke huruf kecil untuk perbandingan
+            $lowerCaseDbCategoryToFilter = Str::lower($dbCategoryToFilter);
+
+            $allSongs = $allSongs->filter(function ($song) use ($lowerCaseDbCategoryToFilter) {
+                // Bandingkan category_type (misal 'Mood Rekomendasi') atau category_value (misal 'senang')
+                // Pastikan kedua sisi perbandingan dikonversi ke lowercase
+                return Str::lower($song->category_type) === $lowerCaseDbCategoryToFilter || Str::lower($song->category_value) === $lowerCaseDbCategoryToFilter;
             });
         }
 
         // --- Langkah 2: Lakukan Paginasi pada Koleksi ---
-        $perPage = 12; // Jumlah item per halaman
+        $perPage = 12;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $currentItems = $allSongs->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
@@ -88,11 +94,8 @@ class MusicRecommendationController extends Controller
             ['path' => LengthAwarePaginator::resolveCurrentPath()]
         );
 
-        // Penting: Gunakan appends() untuk mempertahankan parameter filter kategori
         $paginatedSongs->appends(request()->query());
 
-
-        // Teruskan $selectedSlug ke view agar tombol yang aktif bisa di-highlight
         return view('music_recommendations.index', compact('allSongs', 'selectedSlug', 'paginatedSongs'));
     }
 }

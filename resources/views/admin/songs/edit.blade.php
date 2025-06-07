@@ -10,9 +10,9 @@
 
         <div>
             <label for="title" class="block text-gray-700 font-medium mb-1">Title <span class="text-red-500">*</span></label>
-            <input type="text" name="title" id="title" value="{{ old('title', $song->judul) }}"
+            <input type="text" name="judul" id="judul" value="{{ old('judul', $song->judul) }}"
                 class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-            @error('title')
+            @error('judul')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -37,8 +37,16 @@
 
         <div>
             <label for="emotion" class="block text-gray-700 font-medium mb-1">Emotion</label>
-            <input type="text" name="emotion" id="emotion" value="{{ old('emotion', $song->emotion) }}"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="e.g. happy, sad, calm">
+            <select name="emotion" id="emotion"
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="">Pilih Emosi</option>
+                <option value="senang" {{ old('emotion', $song->emotion) == 'senang' ? 'selected' : '' }}>Senang</option>
+                <option value="sedih" {{ old('emotion', $song->emotion) == 'sedih' ? 'selected' : '' }}>Sedih</option>
+                <option value="marah" {{ old('emotion', $song->emotion) == 'marah' ? 'selected' : '' }}>Marah</option>
+                <option value="cemas" {{ old('emotion', $song->emotion) == 'cemas' ? 'selected' : '' }}>Cemas</option>
+                <option value="tenang" {{ old('emotion', $song->emotion) == 'tenang' ? 'selected' : '' }}>Tenang</option>
+                {{-- untuk menambahkan emosi lain jika diperlukan --}}
+            </select>
             @error('emotion')
                 <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
             @enderror
