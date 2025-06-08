@@ -55,7 +55,7 @@
                             </div>
 
                             <div class="text-center mt-6">
-                                <span class="inline-flex items-center px-5 py-2 rounded-full text-sm font-semibold bg-blue-500 text-white group-hover:bg-blue-600 transition duration-300 transform group-hover:scale-105 shadow-md">
+                                <span class="inline-flex items-center px-5 py-2 rounded-full text-sm font-semibold bg-white text-blue-500 transition duration-300 transform group-hover:scale-105 shadow-sm border border-1">
                                     Lihat Detail
                                     <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                                 </span>
