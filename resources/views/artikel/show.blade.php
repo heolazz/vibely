@@ -33,7 +33,7 @@
 
         <!-- Tombol Kembali -->
         <div class="mt-16 text-center">
-            <a href="{{ route('dashboard') }}"
+            <a href="{{ route('artikel.index') }}"
                class="inline-flex items-center gap-2 text-white bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full shadow-lg transition transform hover:scale-105">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
