@@ -14,33 +14,37 @@
                 {{-- Tombol "Semua" --}}
                 <a href="{{ route('musik.daftar') }}"
                    class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap
-                          {{ !$selectedSlug || $selectedSlug === 'semua' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-800 hover:bg-gray-300' }}
-                          transition duration-200"
+                           {{ !$selectedSlug || $selectedSlug === 'semua' ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-800 hover:bg-gray-300' }}
+                           transition duration-200"
                 >
                     Semua
                 </a>
 
                 {{-- Kategori lainnya --}}
                 @php
+                    // Pastikan daftar ini sesuai dengan map di controller dan data di DB
                     $musicCategories = [
-                        ['label' => 'Mood Rekomendasi', 'slug' => 'mood-rekomendasi'],
-                        ['label' => 'Positif', 'slug' => 'positif'],
-                        ['label' => 'Negatif', 'slug' => 'negatif'],
-                        ['label' => 'Netral', 'slug' => 'netral'],
-                        ['label' => 'Campuran', 'slug' => 'campuran'],
-                        ['label' => 'Emosi Rekomendasi', 'slug' => 'emosi-rekomendasi'],
+//                      ['label' => 'Mood Rekomendasi', 'slug' => 'mood-rekomendasi'],
+//                      ['label' => 'Positif', 'slug' => 'positif'],
+//                    ['label' => 'Negatif', 'slug' => 'negatif'],
+//                  ['label' => 'Netral', 'slug' => 'netral'],
+//                ['label' => 'Campuran', 'slug' => 'campuran'],
+//              ['label' => 'Emosi Rekomendasi', 'slug' => 'emosi-rekomendasi'],
                         ['label' => 'Senang', 'slug' => 'senang'],
                         ['label' => 'Sedih', 'slug' => 'sedih'],
                         ['label' => 'Marah', 'slug' => 'marah'],
                         ['label' => 'Cemas', 'slug' => 'cemas'],
+                        // Tambahkan jika ada slug untuk ini dan ada di DB
+                        ['label' => 'Cinta', 'slug' => 'cinta'],
+                        ['label' => 'Tenang', 'slug' => 'tenang'],
                     ];
                 @endphp
 
                 @foreach($musicCategories as $cat)
                     <a href="{{ route('musik.daftar', ['category' => $cat['slug']]) }}"
                        class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap
-                              {{ $selectedSlug === $cat['slug'] ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-800 hover:bg-gray-300' }}
-                              transition duration-200"
+                               {{ $selectedSlug === $cat['slug'] ? 'bg-blue-600 text-white shadow-md' : 'bg-gray-200 text-gray-800 hover:bg-gray-300' }}
+                               transition duration-200"
                     >
                         {{ $cat['label'] }}
                     </a>
@@ -50,13 +54,14 @@
 
         {{-- Daftar Lagu --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {{-- Loop melalui $paginatedSongs->items() atau langsung $paginatedSongs --}}
+            {{-- Loop melalui $paginatedSongs --}}
             @forelse ($paginatedSongs as $song)
                 <a href="{{ $song->display_url }}" target="_blank" class="block bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                     <div class="flex items-center p-4">
                         @if($song->display_cover)
                             <img src="{{ $song->display_cover }}" alt="Album Cover" class="w-16 h-16 rounded-lg mr-4 object-cover shadow-sm">
                         @else
+                            {{-- Default icon/image if no cover is available --}}
                             <div class="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center mr-4 text-blue-600 text-2xl shadow-sm">🎶</div>
                         @endif
                         <div class="flex-grow">
