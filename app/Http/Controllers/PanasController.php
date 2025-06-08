@@ -157,7 +157,7 @@ class PanasController extends Controller
             'Netral'   => 'netral-mood.gif',
             'Campuran' => 'mix-mood.gif',
         ];
-        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
+        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'Netral-sticker.png'));
 
         $recommendedSongs = MoodSong::where('mood_type', $moodText)->get();
 
