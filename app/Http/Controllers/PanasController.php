@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\PanasResult;
 use App\Models\MoodSong;
-use App\Models\PanasQuestion; // Assuming you have a PanasQuestion model
+use App\Models\PanasQuestion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str; // Needed for Str::headline
+use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
@@ -17,35 +17,35 @@ class PanasController extends Controller
      * Display the PANAS questionnaire form.
      * Checks if the user has filled it this week to control access.
      */
- public function show()
+    public function show()
     {
         $user = Auth::user();
-    
-        // buat Cek apakah user sudah mengisi minggu ini
+
+        // Cek apakah user sudah mengisi minggu ini
         $latestResult = PanasResult::where('user_id', $user->id)
             ->whereBetween('created_at', [
                 now()->startOfWeek(), now()->endOfWeek()
             ])->first();
-    
+
         if ($latestResult) {
             return view('panas.already_filled', compact('latestResult'));
         }
-    
-        // buat Ambil emosi
+
+        // Ambil emosi
         $emotions = PanasQuestion::select('emotion', 'type')->distinct()->get();
-    
+
         $questions = [];
-    
+
         foreach ($emotions as $emo) {
             $randomQuestion = PanasQuestion::where('emotion', $emo->emotion)
                 ->inRandomOrder()
                 ->first();
-    
+
             if ($randomQuestion) {
                 $questions[] = $randomQuestion;
             }
         }
-    
+
         return view('panas.form', compact('questions'));
     }
 
@@ -54,8 +54,6 @@ class PanasController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request data.
-        // The 'responses' array should contain question_id => score.
         $validatedData = $request->validate([
             'responses' => 'required|array',
             'responses.*' => 'required|integer|min:1|max:5',
@@ -64,26 +62,22 @@ class PanasController extends Controller
         $paScore = 0;
         $naScore = 0;
 
-        // Assuming your PanasQuestion model has a 'type' column ('positive' or 'negative')
-        // to differentiate PA and NA questions.
-        $questions = PanasQuestion::all()->keyBy('id'); // Get all questions keyed by ID for easy lookup
+        $questions = PanasQuestion::all()->keyBy('id');
 
         foreach ($validatedData['responses'] as $questionId => $score) {
             $question = $questions->get($questionId);
 
             if ($question) {
-                if ($question->type === 'positive') { // Example: 'positive' for PA questions
+                if ($question->type === 'positive') {
                     $paScore += $score;
-                } elseif ($question->type === 'negative') { // Example: 'negative' for NA questions
+                } elseif ($question->type === 'negative') {
                     $naScore += $score;
                 }
             }
         }
 
-        // Determine mood type using the private helper method
         $moodType = $this->determineMood($paScore, $naScore);
 
-        // Create and save the PanasResult
         PanasResult::create([
             'user_id' => Auth::id(),
             'pa_score' => $paScore,
@@ -91,13 +85,11 @@ class PanasController extends Controller
             'mood_type' => $moodType,
         ]);
 
-        // Redirect to the latest result page after submission
         return redirect()->route('panas.result')->with('success', 'Kuesioner berhasil diisi!');
     }
 
     /**
      * Display the LATEST PANAS result.
-     * This is typically the target after a questionnaire submission.
      */
     public function showLatestResult()
     {
@@ -116,8 +108,16 @@ class PanasController extends Controller
     public function history()
     {
         $history = PanasResult::where('user_id', Auth::id())
-                               ->latest() // Order by latest results
-                               ->paginate(10); // Paginate, e.g., 10 items per page
+                               ->latest()
+                               ->paginate(10);
+
+        // Map through the history results to add the moodText and moodTagColor
+        // This is where you prepare data for the view
+        $history->getCollection()->transform(function ($result) {
+            $result->moodText = $this->determineMood($result->pa_score ?? 0, $result->na_score ?? 0);
+            $result->moodTagColor = $this->getMoodTagColor($result->moodText);
+            return $result;
+        });
 
         return view('panas.history', compact('history'));
     }
@@ -143,12 +143,12 @@ class PanasController extends Controller
         $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
         $naPercent = 100 - $paPercent;
 
-        $radius = 70; // Must match the radius used in your panas.result view
+        $radius = 70;
         $circumference = 2 * M_PI * $radius;
         $strokePA = $circumference * ($paPercent / 100);
         $strokeNA = $circumference * ($naPercent / 100);
-        $colorPA = '#2563eb'; // blue-600
-        $colorNA = '#9ca3af'; // gray-400
+        $colorPA = '#2563eb';
+        $colorNA = '#9ca3af';
 
         $moodText = $this->determineMood($pa, $na);
         $moodImages = [
@@ -169,10 +169,9 @@ class PanasController extends Controller
 
     /**
      * Helper function to determine mood type based on PA and NA scores.
+     * This now includes the extended logic for "Cenderung Positif/Negatif".
      */
     private function determineMood($pa, $na) {
-        // Adjust these thresholds based on the actual PANAS scoring interpretation you are using
-        // These are example thresholds for demonstration.
         $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
         $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
 
@@ -181,7 +180,33 @@ class PanasController extends Controller
         if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
         if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
 
+        // Add the additional conditions from your Blade view
+        if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
+        if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Cenderung Positif';
+        if ($paMood === 'sedang' && $naMood === 'rendah') return 'Cenderung Positif';
+        if ($paMood === 'rendah' && $naMood === 'sedang') return 'Cenderung Negatif';
+        if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Cenderung Negatif';
+
         // Fallback
         return 'Netral';
+    }
+
+    /**
+     * Helper function to get mood tag color.
+     */
+    private function getMoodTagColor($moodText) {
+        switch ($moodText) {
+            case 'Positif':
+            case 'Cenderung Positif':
+                return 'bg-blue-100 text-blue-800';
+            case 'Negatif':
+            case 'Cenderung Negatif':
+                return 'bg-gray-100 text-gray-800';
+            case 'Campuran':
+                return 'bg-purple-100 text-purple-800';
+            case 'Netral':
+            default:
+                return 'bg-gray-100 text-gray-800';
+        }
     }
 }
