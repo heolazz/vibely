@@ -36,7 +36,8 @@
 
             {{-- Tombol Kembali --}}
             <a href="{{ route('dashboard') }}"
-               class="mt-6 inline-flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white font-bold px-8 py-3 sm:px-10 sm:py-4 rounded-full transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 text-lg">
+               class="mt-6 inline-flex items-center justify-center bg-white text-blue-500
+                font-bold px-8 py-3 sm:px-10 sm:py-4 rounded-full transition duration-300 border hover:shadow-lg transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300 focus:ring-offset-2 text-lg">
                 <i class="fas fa-home mr-3"></i> Kembali ke Dashboard
             </a>
         </div>
