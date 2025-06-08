@@ -5,64 +5,6 @@
 <section class="bg-white py-12 sm:py-16 min-h-screen flex flex-col justify-center">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
-        {{-- Perlu diperhatikan: Di sini tidak ada session('success') karena ini halaman detail, bukan hasil langsung setelah submit --}}
-
-        @php
-            // Pastikan fungsi determineMood ini ada dan bisa diakses (di helper atau controller, bukan inline di blade)
-            // Untuk sementara, saya akan biarkan inline agar kode ini lengkap, tapi sebaiknya dipindahkan ke helper atau controller.
-            function determineMood($pa, $na) {
-                $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
-                $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
-
-                if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
-                if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
-                if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
-                if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
-
-                // Tambahan penanganan untuk kondisi sedang
-                if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
-                if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
-                if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
-                if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
-                if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
-
-                return 'Netral'; // Default jika tidak ada yang cocok
-            }
-
-            // Variabel-variabel ini diasumsikan sudah dikirim dari controller (misalnya dari PanasController@showResultDetail)
-            // Namun, untuk memastikan kode ini berfungsi jika di-copy-paste, saya tambahkan fallback
-            $pa = $result->pa_score ?? 0;
-            $na = $result->na_score ?? 0;
-            $moodText = determineMood($pa, $na);
-            // $recommendedSongs juga diasumsikan sudah dikirim dari controller berdasarkan $result->mood_type
-            // Jika Anda ingin mengambilnya di blade, seperti sebelumnya:
-            // use App\Models\MoodSong;
-            // $recommendedSongs = MoodSong::where('mood_type', $moodText)->get();
-
-            $total = $pa + $na;
-            $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
-            $naPercent = 100 - $paPercent;
-
-            $radius = 70;
-            $circumference = 2 * M_PI * $radius;
-
-            $strokePA = $circumference * ($paPercent / 100);
-            $strokeNA = $circumference * ($naPercent / 100);
-
-            $colorPA = '#2563eb'; // blue-600
-            $colorNA = '#9ca3af'; // gray-400
-
-            $moodImages = [
-                'Positif' => 'happy-mood.gif',
-                'Negatif' => 'negatif-mood2.gif',
-                'Netral'  => 'netral-mood.gif',
-                'Campuran' => 'mix-mood.gif',
-                'Cenderung Positif' => 'happy-mood.gif',
-                'Cenderung Negatif' => 'negatif-mood2.gif',
-            ];
-            $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
-        @endphp
-
         @if($result)
             <h1 class="text-3xl sm:text-4xl md:text-4xl font-extrabold text-gray-900 tracking-tight text-center mb-8">
                 Detail Hasil Kuesioner <span class="text-blue-600">Anda</span>
