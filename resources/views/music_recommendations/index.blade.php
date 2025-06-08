@@ -22,19 +22,11 @@
 
                 {{-- Kategori lainnya --}}
                 @php
-                    // Pastikan daftar ini sesuai dengan map di controller dan data di DB
                     $musicCategories = [
-//                      ['label' => 'Mood Rekomendasi', 'slug' => 'mood-rekomendasi'],
-//                      ['label' => 'Positif', 'slug' => 'positif'],
-//                    ['label' => 'Negatif', 'slug' => 'negatif'],
-//                  ['label' => 'Netral', 'slug' => 'netral'],
-//                ['label' => 'Campuran', 'slug' => 'campuran'],
-//              ['label' => 'Emosi Rekomendasi', 'slug' => 'emosi-rekomendasi'],
                         ['label' => 'Senang', 'slug' => 'senang'],
                         ['label' => 'Sedih', 'slug' => 'sedih'],
                         ['label' => 'Marah', 'slug' => 'marah'],
                         ['label' => 'Cemas', 'slug' => 'cemas'],
-                        // Tambahkan jika ada slug untuk ini dan ada di DB
                         ['label' => 'Cinta', 'slug' => 'cinta'],
                         ['label' => 'Tenang', 'slug' => 'tenang'],
                     ];
@@ -54,28 +46,31 @@
 
         {{-- Daftar Lagu --}}
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {{-- Loop melalui $paginatedSongs --}}
             @forelse ($paginatedSongs as $song)
                 <a href="{{ $song->display_url }}" target="_blank" class="block bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
                     <div class="flex items-center p-4">
-                        @if($song->display_cover)
-                            <img src="{{ $song->display_cover }}" alt="Album Cover" class="w-16 h-16 rounded-lg mr-4 object-cover shadow-sm">
-                        @else
-                            {{-- Default icon/image if no cover is available --}}
-                            <div class="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center mr-4 text-blue-600 text-2xl shadow-sm">🎶</div>
-                        @endif
+                        {{-- Album cover dan placeholder ikon musik dihapus dari sini --}}
+                        {{-- <div class="w-16 h-16 rounded-lg bg-blue-100 flex items-center justify-center mr-4 text-blue-600 text-2xl shadow-sm flex-shrink-0">
+                            🎶
+                        </div> --}}
+
                         <div class="flex-grow">
                             <p class="text-base font-semibold text-gray-900 truncate">{{ $song->display_title }}</p>
-                            <p class="text-sm text-gray-600 truncate mb-1">oleh {{ $song->display_artist }}</p>
+                            <p class="text-sm text-gray-600 truncate mb-1">{{ $song->display_artist }}</p>
                             @if($song->category_value)
                                 <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 mt-1">
                                     {{ $song->category_value }}
                                 </span>
                             @endif
                         </div>
-                        <span class="ml-4 text-blue-500 hover:text-blue-700 text-xl flex-shrink-0">
-                            ▶️
-                        </span>
+                        {{-- SVG Icon Play --}}
+                        <div class="ml-4 text-blue-500 hover:text-blue-700 flex-shrink-0" style="width: 28px; height: 28px;">
+                            <svg viewBox="0 0 512 512" style="fill: currentColor;">
+                                <g>
+                                    <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256		C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031		c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031		l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
+                                </g>
+                            </svg>
+                        </div>
                     </div>
                 </a>
             @empty

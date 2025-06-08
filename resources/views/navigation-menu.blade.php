@@ -6,7 +6,7 @@
                 <!-- Logo -->
                  @if (!Auth::user()->is_admin)
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('welcome') }}">
+                    <a href="{{ route('dashboard') }}">
                         <span class="font-bold text-xl text-black">Vibely</span>
                         <!-- <x-application-mark class="block h-9 w-auto" /> -->
                     </a>

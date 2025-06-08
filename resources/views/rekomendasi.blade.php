@@ -4,9 +4,9 @@
 <div class="bg-cover bg-center min-h-screen py-12" style="background-image: url('{{ asset('images/bg-kuiz.jpg') }}');"> {{-- Perhatikan: bg-kuiz.jpg --}}
     {{-- Kontainer utama: Default px-4, sm:px-6 (tablet), lg:px-8 (desktop) untuk spasi yang lebih baik --}}
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <h1 class="text-3xl mb-4 font-bold text-center text-white drop-shadow-lg">Temukan Musik Untuk Emosimu </h1>
-            
+
         <div class="grid md:grid-cols-3 gap-8">
             <div class="md:col-span-2 space-y-6">
                 <form action="{{ url('/rekomendasi') }}" method="POST" class="bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-lg shadow-md">
@@ -65,6 +65,7 @@
                     </div>
                 </form>
 
+                {{-- Bagian Rekomendasi Musik yang Diperbaiki --}}
                 @isset($songs)
                 <div class="mt-8 bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-lg shadow-md">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">
@@ -73,17 +74,20 @@
                     @if($songs->count())
                         <ul class="space-y-3">
                             @foreach($songs as $song)
-                                <li class="p-4 bg-blue-50 rounded-lg shadow-sm border border-blue-200 flex items-center space-x-3">
-                                    <span class="text-blue-500 text-xl">🎵</span>
-                                    <div>
-                                        <h3 class="text-lg font-bold text-gray-800">{{ $song->title }}</h3>
-                                        <p class="text-gray-600 text-sm">{{ $song->artist }}</p>
-                                        {{-- Tampilkan link musik --}}
-                                        @if($song->link)
-                                            <a href="{{ $song->link }}" target="_blank" class="text-blue-600 hover:underline text-sm font-medium block mt-1">Dengarkan di sini <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
-                                        @endif
+                                <a href="{{ $song->link }}" target="_blank" class="block bg-gray-50 rounded-lg p-3 flex items-center justify-between border border-gray-200 hover:bg-gray-100 transition duration-200">
+                                    <div class="flex-1 min-w-0 pr-4">
+                                        <p class="font-semibold text-gray-900 truncate" title="{{ $song->judul }}">{{ $song->judul }}</p>
+                                        <p class="text-sm text-gray-600 truncate" title="{{ $song->artist }}">oleh {{ $song->artist }}</p>
                                     </div>
-                                </li>
+                                    {{-- SVG Icon Play Baru --}}
+                                    <div class="text-blue-500 hover:text-blue-700 flex-shrink-0" style="width: 28px; height: 28px;">
+                                        <svg viewBox="0 0 512 512" style="fill: currentColor;">
+                                            <g>
+                                                <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256		C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031		c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031		l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
+                                            </g>
+                                        </svg>
+                                    </div>
+                                </a>
                             @endforeach
                         </ul>
                     @else
@@ -93,21 +97,22 @@
                 @endisset
             </div>
 
+            {{-- Bagian Histori Emosi (Tetap Tidak Berubah) --}}
             <div class="bg-white bg-opacity-90 backdrop-blur-md p-6 rounded-lg shadow-md max-h-[595px] overflow-y-auto">
                 <h2 class="text-xl font-semibold text-gray-800 mb-4">Histori Emosimu</h2>
 
                 {{-- Tombol filter untuk riwayat --}}
                 <div class="mb-4 flex justify-center space-x-2">
                     <a href="{{ route('rekomendasi', ['days' => 0]) }}"
-                       class="px-4 py-2 rounded-full text-sm font-medium {{ $daysFilter == 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                       class="px-4 py-2 rounded-full text-sm font-medium {{ ($daysFilter ?? 0) == 0 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                         Semua
                     </a>
                     <a href="{{ route('rekomendasi', ['days' => 7]) }}"
-                       class="px-4 py-2 rounded-full text-sm font-medium {{ $daysFilter == 7 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                       class="px-4 py-2 rounded-full text-sm font-medium {{ ($daysFilter ?? 0) == 7 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                         7 Hari
                     </a>
                     <a href="{{ route('rekomendasi', ['days' => 30]) }}"
-                       class="px-4 py-2 rounded-full text-sm font-medium {{ $daysFilter == 30 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                       class="px-4 py-2 rounded-full text-sm font-medium {{ ($daysFilter ?? 0) == 30 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                         30 Hari
                     </a>
                 </div>
@@ -116,7 +121,7 @@
                 {{-- Bagian Grafik Emosi --}}
                 <div class="mb-2">
                     <h3 class="text-lg font-semibold text-gray-700 mb-2">Ringkasan Emosi Kamu</h3>
-                    @if(collect($emotionCounts)->sum() > 0) {{-- Hanya tampilkan jika ada data --}}
+                    @if(collect($emotionCounts ?? [])->sum() > 0) {{-- Hanya tampilkan jika ada data --}}
                         {{-- Container baru untuk canvas Chart.js dengan ukuran eksplisit --}}
                         <div class="relative h-64 w-full"> {{-- Tinggi 64 (256px), lebar 100% --}}
                             <canvas id="emotionChart"></canvas>
@@ -127,7 +132,7 @@
                 </div>
                 {{-- Akhir Bagian Grafik Emosi --}}
 
-                @if($emotionNotes->count())
+                @if(($emotionNotes ?? collect())->count())
                     <ul class="space-y-4">
                         @foreach($emotionNotes as $note)
                             {{-- Buat seluruh kartu riwayat dapat diklik --}}
@@ -155,15 +160,15 @@
 
 {{-- Link Chart.js CDN --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-{{-- Link Font Awesome untuk ikon eksternal link --}}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+{{-- Link Font Awesome untuk ikon eksternal link (dihapus jika tidak dipakai lagi) --}}
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> --}}
 
 
 <script>
     let emotionChartInstance = null; // Deklarasikan variabel untuk menyimpan instance grafik
 
     document.addEventListener('DOMContentLoaded', function() {
-        const emotionCounts = @json($emotionCounts); // Ambil data dari Controller
+        const emotionCounts = @json($emotionCounts ?? []); // Ambil data dari Controller
 
         const labels = Object.keys(emotionCounts);
         const data = Object.values(emotionCounts);

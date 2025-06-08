@@ -2,7 +2,7 @@
 
 @section('content')
 {{-- Kontainer utama dengan latar belakang putih atau gradien sangat lembut --}}
-<section class="bg-gray-50 py-12 sm:py-16 min-h-screen flex flex-col justify-center">
+<section class="bg-white py-12 sm:py-16 min-h-screen flex flex-col justify-center">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
         @if(session('success'))
@@ -16,7 +16,29 @@
             use App\Models\MoodSong;
 
             $result = PanasResult::where('user_id', auth()->id())->latest()->first();
-            $recommendedSongs = $result ? MoodSong::where('mood_type', determineMood($result->pa_score, $result->na_score))->get() : collect();
+            // Pastikan fungsi determineMood ini ada dan bisa diakses (di helper atau controller, bukan inline di blade)
+            // Untuk sementara, saya akan biarkan inline agar kode ini lengkap, tapi sebaiknya dipindahkan.
+            function determineMood($pa, $na) {
+                $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
+                $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
+
+                if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
+                if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
+                if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
+                if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
+
+                // Tambahan penanganan untuk kondisi sedang, seperti di controller Anda
+                if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
+                if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
+                if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
+                if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
+                if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
+
+                return 'Netral'; // Default jika tidak ada yang cocok
+            }
+
+            $moodText = determineMood($result->pa_score ?? 0, $result->na_score ?? 0);
+            $recommendedSongs = $result ? MoodSong::where('mood_type', $moodText)->get() : collect();
 
             $pa = $result ? $result->pa_score : 0;
             $na = $result ? $result->na_score : 0;
@@ -35,24 +57,13 @@
             $colorPA = '#2563eb'; // blue-600
             $colorNA = '#9ca3af'; // gray-400
 
-            function determineMood($pa, $na) {
-                $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
-                $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
-
-                if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
-                if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
-                if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
-                if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
-
-                return 'Netral';
-            }
-
-            $moodText = determineMood($pa, $na);
             $moodImages = [
                 'Positif' => 'happy-mood.gif',
                 'Negatif' => 'negatif-mood2.gif',
                 'Netral'  => 'netral-mood.gif',
                 'Campuran' => 'mix-mood.gif',
+                'Cenderung Positif' => 'happy-mood.gif',
+                'Cenderung Negatif' => 'negatif-mood2.gif',
             ];
             $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
         @endphp
@@ -63,7 +74,7 @@
             </h1>
 
             {{-- Kartu Utama Hasil Mood --}}
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200 mb-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-x-12 items-center justify-items-center">
                     <div class="relative w-56 h-56 flex items-center justify-center">
                         <svg width="224" height="224" class="transform -rotate-90">
@@ -119,38 +130,33 @@
                 </div>
             </div>
 
-            {{-- Kartu Rekomendasi Musik --}}
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200 mt-8">
-                <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">🎶 Playlist Rekomendasi untuk Anda 🎶</h2>
+            {{-- Kartu Rekomendasi Musik (Tampilan Baru) --}}
+            <div class="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200 mt-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">Playlist Rekomendasi untuk Anda</h2>
 
                 @if($recommendedSongs->isNotEmpty())
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 justify-center">
+                    <div class="space-y-3">
                         @foreach($recommendedSongs as $song)
-                            <a href="{{ $song->url }}" target="_blank" class="block bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition transform hover:-translate-y-0.5 group overflow-hidden">
-                                <div class="relative">
-                                    @if($song->album_cover)
-                                        <img src="{{ $song->album_cover }}" alt="Cover {{ $song->title }}" class="w-full h-28 object-cover rounded-t-xl">
-                                    @else
-                                        <div class="w-full h-28 bg-gray-100 flex items-center justify-center text-gray-400 text-xs rounded-t-xl">
-                                            🎶 No Image
-                                        </div>
-                                    @endif
-                                    {{-- Play overlay --}}
-                                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-t-xl">
-                                        <span class="text-white text-2xl">▶️</span>
-                                    </div>
+                            <a href="{{ $song->url }}" target="_blank" class="block bg-gray-50 rounded-lg p-3 flex items-center justify-between border border-gray-200 hover:bg-gray-100 transition duration-200">
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <p class="font-semibold text-gray-900 truncate" title="{{ $song->title }}">{{ $song->title }}</p>
+                                    <p class="text-sm text-gray-600 truncate" title="{{ $song->artist }}">oleh {{ $song->artist }}</p>
                                 </div>
-                                <div class="p-3 text-center">
-                                    <p class="font-semibold text-gray-800 text-sm mb-0.5 truncate" title="{{ $song->title }}">{{ $song->title }}</p>
-                                    <p class="text-gray-600 text-xs truncate" title="{{ $song->artist }}">oleh {{ $song->artist }}</p>
+                                {{-- SVG Icon Play Baru --}}
+                                <div class="text-blue-500 hover:text-blue-700 flex-shrink-0" style="width: 28px; height: 28px;">
+                                    <svg viewBox="0 0 512 512" style="fill: currentColor;">
+                                        <g>
+                                            <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256		C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031		c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031		l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
+                                        </g>
+                                    </svg>
                                 </div>
                             </a>
                         @endforeach
                     </div>
                     <div class="text-center mt-8">
-                         <a href="{{ route('musik.daftar') }}" class="inline-block text-blue-600 hover:text-blue-700 font-semibold text-sm transition">
-                             Lihat Semua Rekomendasi Musik →
-                         </a>
+                           <a href="{{ route('musik.daftar') }}" class="inline-block text-blue-600 hover:text-blue-700 font-semibold text-sm transition">
+                                Lihat Semua Rekomendasi Musik →
+                           </a>
                     </div>
                 @else
                     <p class="text-center text-gray-500 italic mt-4">Belum ada rekomendasi musik spesifik untuk mood ini.</p>
@@ -159,15 +165,14 @@
             </div>
 
         @else
-            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 text-center py-20">
+            <div class="bg-white p-8 rounded-2xl  border border-gray-200 text-center py-20">
                 <p class="text-gray-600 italic text-xl">Belum ada hasil kuesioner ditemukan. Silakan isi kuesioner Anda sekarang! ✨</p>
             </div>
         @endif
 
         {{-- Tombol aksi di bagian bawah --}}
         <div class="mt-12 text-center">
-            <a href="{{ route('panas.show') }}" class="inline-flex items-center bg-blue-600 text-white px-7 py-3 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8m-9 1a9 9 0 110-18 9 9 0 010 18z"></path></svg>
+            <a href="{{ route('panas.show') }}" class="inline-flex items-center bg-blue-700 text-white px-7 py-3 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
                 Isi Kuesioner Baru
             </a>
             <p class="mt-4 text-sm text-gray-500">

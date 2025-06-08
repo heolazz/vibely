@@ -2,34 +2,78 @@
 
 @section('content')
 {{-- Kontainer utama dengan latar belakang abu-abu sangat lembut (mengikuti style panas.result) --}}
-<section class="bg-gray-50 py-12 sm:py-16 min-h-screen flex flex-col justify-center">
+<section class="bg-white py-12 sm:py-16 min-h-screen flex flex-col justify-center">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
         {{-- Perlu diperhatikan: Di sini tidak ada session('success') karena ini halaman detail, bukan hasil langsung setelah submit --}}
 
-        {{-- !!! PENTING: Hapus blok PHP berikut dari sini, karena variabel sudah diteruskan dari Controller !!! --}}
-        {{-- @php
-            use App\Models\PanasResult;
-            use App\Models\MoodSong;
+        @php
+            // Pastikan fungsi determineMood ini ada dan bisa diakses (di helper atau controller, bukan inline di blade)
+            // Untuk sementara, saya akan biarkan inline agar kode ini lengkap, tapi sebaiknya dipindahkan ke helper atau controller.
+            function determineMood($pa, $na) {
+                $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
+                $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
 
-            $result = PanasResult::where('user_id', auth()->id())->latest()->first(); // <-- Ini TIDAK DIBUTUHKAN DI SINI
-            // ... semua perhitungan PA, NA, moodText, moodImage, recommendedSongs ...
-        @endphp --}}
-        {{-- Variabel ($result, $pa, $na, $moodText, $moodImage, $recommendedSongs, dll)
-             akan tersedia secara otomatis karena sudah di-compact dari PanasController@showResultDetail. --}}
+                if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
+                if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
+                if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
+                if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
 
+                // Tambahan penanganan untuk kondisi sedang
+                if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
+                if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
+                if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
+                if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
+                if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
 
-        @if($result) {{-- Pastikan $result ada (Controller harus menjamin ini dengan findOrFail) --}}
+                return 'Netral'; // Default jika tidak ada yang cocok
+            }
+
+            // Variabel-variabel ini diasumsikan sudah dikirim dari controller (misalnya dari PanasController@showResultDetail)
+            // Namun, untuk memastikan kode ini berfungsi jika di-copy-paste, saya tambahkan fallback
+            $pa = $result->pa_score ?? 0;
+            $na = $result->na_score ?? 0;
+            $moodText = determineMood($pa, $na);
+            // $recommendedSongs juga diasumsikan sudah dikirim dari controller berdasarkan $result->mood_type
+            // Jika Anda ingin mengambilnya di blade, seperti sebelumnya:
+            // use App\Models\MoodSong;
+            // $recommendedSongs = MoodSong::where('mood_type', $moodText)->get();
+
+            $total = $pa + $na;
+            $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
+            $naPercent = 100 - $paPercent;
+
+            $radius = 70;
+            $circumference = 2 * M_PI * $radius;
+
+            $strokePA = $circumference * ($paPercent / 100);
+            $strokeNA = $circumference * ($naPercent / 100);
+
+            $colorPA = '#2563eb'; // blue-600
+            $colorNA = '#9ca3af'; // gray-400
+
+            $moodImages = [
+                'Positif' => 'happy-mood.gif',
+                'Negatif' => 'negatif-mood2.gif',
+                'Netral'  => 'netral-mood.gif',
+                'Campuran' => 'mix-mood.gif',
+                'Cenderung Positif' => 'happy-mood.gif',
+                'Cenderung Negatif' => 'negatif-mood2.gif',
+            ];
+            $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
+        @endphp
+
+        @if($result)
             <h1 class="text-3xl sm:text-4xl md:text-4xl font-extrabold text-gray-900 tracking-tight text-center mb-8">
                 Detail Hasil Kuesioner <span class="text-blue-600">Anda</span>
             </h1>
             <p class="text-base sm:text-lg text-center text-gray-600 mb-8 max-w-2xl mx-auto">
                 Ini adalah analisis rinci dari kuesioner Anda yang diisi pada tanggal
-                <span class="font-semibold">{{ $result->created_at->isoFormat('DD MMMM YYYY [pukul] HH:mm') }} WIB</span>.
+                <span class="font-semibold">{{ $result->created_at->isoFormat('DD MMMMYYYY [pukul] HH:mm') }} WIB</span>.
             </p>
 
             {{-- Kartu Utama Hasil Mood (sama persis dengan panas.result) --}}
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200 mb-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-x-12 items-center justify-items-center">
                     {{-- Diagram Lingkaran PA/NA --}}
                     <div class="relative w-56 h-56 flex items-center justify-center">
@@ -87,30 +131,31 @@
                 </div>
             </div>
 
-            {{-- Kartu Rekomendasi Musik (sama persis dengan panas.result) --}}
-            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-200 mt-8">
-                <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">🎶 Playlist Rekomendasi untuk Mood Ini 🎶</h2>
+            {{-- Kartu Rekomendasi Musik (Sekarang meniru style result.blade.php) --}}
+            <div class="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200 mt-8">
+                <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">Playlist Rekomendasi untuk Mood Ini</h2>
 
                 @if($recommendedSongs->isNotEmpty())
-                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 justify-center">
+                    {{-- Menggunakan daftar sederhana (space-y) --}}
+                    <div class="space-y-3">
                         @foreach($recommendedSongs as $song)
-                            <a href="{{ $song->url }}" target="_blank" class="block bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition transform hover:-translate-y-0.5 group overflow-hidden">
-                                <div class="relative">
-                                    @if($song->album_cover)
-                                        <img src="{{ $song->album_cover }}" alt="Cover {{ $song->title }}" class="w-full h-28 object-cover rounded-t-xl">
-                                    @else
-                                        <div class="w-full h-28 bg-gray-100 flex items-center justify-center text-gray-400 text-xs rounded-t-xl">
-                                            🎶 No Image
-                                        </div>
+                            <a href="{{ $song->url }}" target="_blank" class="block bg-gray-50 rounded-lg p-3 flex items-center justify-between border border-gray-200 hover:bg-gray-100 transition duration-200">
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <p class="font-semibold text-gray-900 truncate" title="{{ $song->title }}">{{ $song->title }}</p>
+                                    <p class="text-sm text-gray-600 truncate" title="{{ $song->artist }}">oleh {{ $song->artist }}</p>
+                                    @if($song->mood_type) {{-- Menggunakan $song->mood_type --}}
+                                        <span class="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 mt-1">
+                                            {{ $song->mood_type }}
+                                        </span>
                                     @endif
-                                    {{-- Play overlay --}}
-                                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-t-xl">
-                                        <span class="text-white text-2xl">▶️</span>
-                                    </div>
                                 </div>
-                                <div class="p-3 text-center">
-                                    <p class="font-semibold text-gray-800 text-sm mb-0.5 truncate" title="{{ $song->title }}">{{ $song->title }}</p>
-                                    <p class="text-gray-600 text-xs truncate" title="{{ $song->artist }}">oleh {{ $song->artist }}</p>
+                                {{-- SVG Icon Play --}}
+                                <div class="text-blue-500 hover:text-blue-700 flex-shrink-0" style="width: 28px; height: 28px;">
+                                    <svg viewBox="0 0 512 512" style="fill: currentColor;">
+                                        <g>
+                                            <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256		C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031		c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031		l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
+                                        </g>
+                                    </svg>
                                 </div>
                             </a>
                         @endforeach
@@ -128,15 +173,14 @@
 
         @else
             {{-- Pesan fallback jika $result tidak ada (seharusnya tidak tercapai dengan findOrFail di controller) --}}
-            <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 text-center py-20">
+            <div class="bg-white p-8 rounded-2xl  border border-gray-200 text-center py-20">
                 <p class="text-gray-600 italic text-xl">Hasil kuesioner tidak ditemukan untuk ID ini.</p>
             </div>
         @endif
 
         {{-- Tombol aksi di bagian bawah --}}
         <div class="mt-12 text-center">
-            <a href="{{ route('panas.history') }}" class="inline-flex items-center bg-gray-600 text-white px-7 py-3 rounded-full text-base font-semibold hover:bg-gray-700 transition duration-300 shadow-md">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8m-9 1a9 9 0 110-18 9 9 0 010 18z"></path></svg>
+            <a href="{{ route('panas.history') }}" class="inline-flex items-center bg-blue-700 text-white px-7 py-3 rounded-full text-base font-semibold hover:bg-gray-700 transition duration-300 shadow-md">
                 Kembali ke Riwayat
             </a>
             <p class="mt-4 text-sm text-gray-500">
