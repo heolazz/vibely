@@ -39,9 +39,9 @@ class AppServiceProvider extends ServiceProvider
     Blade::componentNamespace('App\\View\\Components', 'components');
     // ...
 
-    //  if (app()->environment('production')) {
-    //     URL::forceScheme('https');
-    // }
+     if (app()->environment('production')) {
+        URL::forceScheme('https');
+    }
 }
 }
 
