@@ -147,8 +147,8 @@ class PanasController extends Controller
         $circumference = 2 * M_PI * $radius;
         $strokePA = $circumference * ($paPercent / 100);
         $strokeNA = $circumference * ($naPercent / 100);
-        $colorPA = '#2563eb';
-        $colorNA = '#9ca3af';
+        $colorPA = '#3b82f6';
+        $colorNA = '#e5e7eb';
 
         $moodText = $this->determineMood($pa, $na);
         $moodImages = [
