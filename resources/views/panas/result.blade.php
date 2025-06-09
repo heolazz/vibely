@@ -62,8 +62,8 @@
                 'Negatif' => 'negatif-mood2.gif',
                 'Netral'  => 'netral-mood.gif',
                 'Campuran' => 'mix-mood.gif',
-                'Cenderung Positif' => 'happy-mood.gif',
-                'Cenderung Negatif' => 'negatif-mood2.gif',
+                //'Cenderung Positif' => 'happy-mood.gif',
+                //'Cenderung Negatif' => 'negatif-mood2.gif',
             ];
             $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
         @endphp
@@ -172,7 +172,7 @@
 
         {{-- Tombol aksi di bagian bawah --}}
         <div class="mt-12 text-center">
-            <a href="{{ route('panas.show') }}" class="inline-flex items-center bg-blue-700 text-white px-7 py-3 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
+            <a href="{{ route('panas.show') }}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
                 Isi Kuesioner Baru
             </a>
             <p class="mt-4 text-sm text-gray-500">
