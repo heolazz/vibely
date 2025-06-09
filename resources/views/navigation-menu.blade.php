@@ -14,10 +14,26 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                    {{ __('Dashboard') }}
-                    </x-nav-link>
-                </div>
+    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+        Dashboard
+    </x-nav-link>
+    
+    <x-nav-link href="{{ route('rekomendasi') }}" :active="request()->routeIs('rekomendasi')">
+        Jurnal Emosi
+    </x-nav-link>
+
+    <x-nav-link href="{{ route('musik.daftar') }}" :active="request()->routeIs('musik.daftar')">
+        Musik
+    </x-nav-link>
+
+    <x-nav-link href="{{ route('panas.show') }}" :active="request()->routeIs('panas.show')">
+        Mood Tracker
+    </x-nav-link>
+    
+    <x-nav-link href="{{ route('artikel.index') }}" :active="request()->routeIs('artikel.index', 'artikel.show')">
+        Artikel
+    </x-nav-link>
+</div>
                 @endif
             </div>
 

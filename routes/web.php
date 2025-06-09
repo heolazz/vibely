@@ -26,14 +26,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/rekomendasi', [RekomendasiController::class, 'index'])->name('rekomendasi');
     Route::post('/rekomendasi', [RekomendasiController::class, 'filter']);
 
-    // Rute PANAS
-    Route::get('/panas', [PANASController::class, 'show'])->name('panas.show');
-    Route::post('/panas', [PANASController::class, 'store'])->name('panas.store');
-    Route::get('/panas/result', function () {
-        return view('panas.result');
-    })->name('panas.result');
 });
 
+// Rute PANAS
+Route::get('/panas', [PANASController::class, 'show'])->name('panas.show');
+Route::post('/panas', [PANASController::class, 'store'])->name('panas.store');
+Route::get('/panas/result', function () {
+    return view('panas.result');
+})->name('panas.result');
 
 Route::middleware([
     'auth:sanctum',

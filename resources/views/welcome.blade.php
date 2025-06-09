@@ -167,18 +167,142 @@
 </section>
 
 <section id="artikel" class="py-16 bg-white dark:bg-black">
-  <div class="container mx-auto px-4 max-w-6xl">
-    <h2 class="text-3xl font-bold text-center text-black dark:text-white mb-10">Artikel Seputar Kesehatan Mental</h2>
-    <div class="grid md:grid-cols-3 gap-8">
-      @foreach ($articles as $article)
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 block">
-          <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400">{{ $article->excerpt }}</p>
+    <div class="container mx-auto px-4 max-w-6xl">
+
+        {{-- Header Section: Judul dan Link Lihat Semua --}}
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="text-3xl font-bold text-black dark:text-white">
+                Artikel Seputar Kesehatan Mental
+            </h2>
+            <a href="{{ route('artikel.index') }}" class="text-blue-600 hover:underline font-semibold hidden md:block">
+                Lihat Semua →
+            </a>
         </div>
-      @endforeach
+
+        {{-- ====================================================== --}}
+        {{-- SLIDER ARTIKEL DENGAN TOMBOL --}}
+        {{-- ====================================================== --}}
+        <div class="relative">
+            <button id="slider-prev-btn" class="absolute top-1/2 -left-4 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+            </button>
+
+            <div id="slider-viewport" class="overflow-hidden">
+                <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
+                    @forelse ($articles as $article)
+                        {{-- Kartu Artikel --}}
+                        <div class="flex-none w-full md:w-1/2 lg:w-1/3 px-4">
+                            <a href="{{ route('artikel.show', $article->id) }}" class="block h-full">
+                                <div class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 h-full flex flex-col">
+                                    <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 flex-grow">{{ $article->excerpt }}</p>
+                                </div>
+                            </a>
+                        </div>
+                    @empty
+                        <p class="text-center text-gray-500 w-full">Belum ada artikel yang tersedia.</p>
+                    @endforelse
+                </div>
+            </div>
+
+            <button id="slider-next-btn" class="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+
+        {{-- Link "Lihat Semua" untuk tampilan mobile --}}
+        <div class="text-center mt-8 md:hidden">
+            <a href="{{ route('artikel.index') }}" class="text-blue-600 hover:underline font-semibold">
+                Lihat Semua Artikel →
+            </a>
+        </div>
     </div>
-  </div>
 </section>
+
+{{-- Kode JavaScript untuk Slider --}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const track = document.getElementById('slider-track');
+    const prevBtn = document.getElementById('slider-prev-btn');
+    const nextBtn = document.getElementById('slider-next-btn');
+    
+    // Pastikan elemen ada sebelum menjalankan script
+    if (!track || !prevBtn || !nextBtn) {
+        return;
+    }
+
+    const cards = track.children;
+    if (cards.length === 0) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+        return;
+    }
+
+    let cardWidth = cards[0].offsetWidth;
+    let currentIndex = 0;
+    
+    // Fungsi untuk memperbarui posisi slider dan status tombol
+    function updateSlider() {
+        // Hitung berapa banyak kartu yang terlihat di layar
+        const viewportWidth = track.parentElement.offsetWidth;
+        // Penyesuaian kecil untuk pembulatan agar lebih akurat
+        const visibleCards = Math.round(viewportWidth / cardWidth);
+
+        // Geser track
+        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+
+        // ======================================================
+        // PERUBAHAN LOGIKA DARI 'DISABLED' MENJADI 'HIDDEN'
+        // ======================================================
+
+        // Logika untuk Tombol Kiri (Previous)
+        if (currentIndex === 0) {
+            prevBtn.classList.add('hidden');
+        } else {
+            prevBtn.classList.remove('hidden');
+        }
+
+        // Logika untuk Tombol Kanan (Next)
+        if (currentIndex >= cards.length - visibleCards) {
+            nextBtn.classList.add('hidden');
+        } else {
+            nextBtn.classList.remove('hidden');
+        }
+    }
+
+    // Event listener untuk tombol next
+    nextBtn.addEventListener('click', () => {
+        const viewportWidth = track.parentElement.offsetWidth;
+        const visibleCards = Math.round(viewportWidth / cardWidth);
+        
+        if (currentIndex < cards.length - visibleCards) {
+            currentIndex++;
+            updateSlider();
+        }
+    });
+
+    // Event listener untuk tombol prev
+    prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+        }
+    });
+
+    // Panggil updateSlider saat ukuran window berubah (untuk responsivitas)
+    window.addEventListener('resize', () => {
+        cardWidth = cards[0].offsetWidth; // Hitung ulang lebar kartu
+        updateSlider();
+    });
+
+    // Panggil pertama kali untuk inisialisasi
+    updateSlider();
+});
+</script>
 
 <section class="py-20 bg-white dark:bg-black text-center text-black dark:text-white">
   <div class="container mx-auto px-4 max-w-4xl">
@@ -192,44 +316,6 @@
   <p>© {{ date('Y') }} Vibely – Karena perasaanmu penting 🌻</p>
 </footer>
 
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const slider = document.getElementById('emotionSlider');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const slidesCount = slider.children.length;
-    let currentIndex = 0;
-
-    function updateSlider() {
-      slider.style.transform = `translateX(-${currentIndex * 100}%)`;
-    }
-
-    prevBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex - 1 + slidesCount) % slidesCount;
-      updateSlider();
-    });
-
-    nextBtn.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % slidesCount;
-      updateSlider();
-    });
-  });
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const slider = document.getElementById('emotionSlider');
-    let currentIndex = 0;
-    const slidesCount = slider.children.length;
-
-    slider.addEventListener('click', () => {
-      currentIndex = (currentIndex + 1) % slidesCount;
-      slider.style.transform = `translateX(-${currentIndex * 100}%)`;
-    });
-  });
-</script>
 
 </body>
 </html>

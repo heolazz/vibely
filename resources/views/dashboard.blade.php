@@ -125,8 +125,8 @@
                 <div class="grid grid-cols-2 gap-3 justify-items-center flex-grow overflow-y-auto custom-scrollbar pr-1">
                     @php
                         $quickTools = [
-                            ['icon' => asset('icons/icon-kuesioner.png'), 'title' => 'Isi PANAS', 'route' => route('panas.show')],
-                            ['icon' => asset('icons/icon-new.png'), 'title' => 'Hasil PANAS', 'route' => route('panas.result')],
+                            ['icon' => asset('icons/icon-kuesioner.png'), 'title' => 'Mood Tracker', 'route' => route('panas.show')],
+                            ['icon' => asset('icons/icon-new.png'), 'title' => 'Latest Mood', 'route' => route('panas.result')],
                             ['icon' => asset('icons/icon-history.png'), 'title' => 'Riwayat Mood', 'route' => route('panas.history')],
                             ['icon' => asset('icons/icon-music.png'), 'title' => 'Rekomendasi Musik', 'route' => route('musik.daftar')],
                             ['icon' => asset('icons/icon-education.png'), 'title' => 'Baca Artikel', 'route' => route('artikel.index')],
