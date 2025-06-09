@@ -168,8 +168,6 @@
 
 <section id="artikel" class="py-16 bg-white dark:bg-black">
     <div class="container mx-auto px-4 max-w-6xl">
-
-        {{-- Header Section: Judul dan Link Lihat Semua --}}
         <div class="flex justify-between items-center mb-10">
             <h2 class="text-3xl font-bold text-black dark:text-white">
                 Artikel Seputar Kesehatan Mental
@@ -178,22 +176,20 @@
                 Lihat Semua →
             </a>
         </div>
-
-        {{-- ====================================================== --}}
-        {{-- SLIDER ARTIKEL DENGAN TOMBOL --}}
-        {{-- ====================================================== --}}
-        <div class="relative">
-            <button id="slider-prev-btn" class="absolute top-1/2 -left-4 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+        
+        <div class="flex items-center gap-2 md:gap-4">
+            <button id="slider-prev-btn" class="flex-shrink-0 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                 </svg>
             </button>
 
-            <div id="slider-viewport" class="overflow-hidden">
-                <div id="slider-track" class="flex transition-transform duration-500 ease-in-out">
+            <div id="slider-viewport" class="overflow-hidden flex-1">
+                {{-- PERBAIKAN: Menambahkan 'gap-4' untuk jarak antar kartu --}}
+                <div id="slider-track" class="flex transition-transform duration-500 ease-in-out gap-4">
                     @forelse ($articles as $article)
-                        {{-- Kartu Artikel --}}
-                        <div class="flex-none w-full md:w-1/2 lg:w-1/3 px-4">
+                        {{-- PERBAIKAN: Menghapus 'px-2' dari kartu --}}
+                        <div class="flex-none w-full md:w-1/2 lg:w-1/3">
                             <a href="{{ route('artikel.show', $article->id) }}" class="block h-full">
                                 <div class="bg-gray-50 dark:bg-gray-900 rounded-xl shadow-md hover:shadow-lg transition p-6 h-full flex flex-col">
                                     <h3 class="font-semibold text-lg mb-2 text-black dark:text-white">{{ $article->title }}</h3>
@@ -207,14 +203,13 @@
                 </div>
             </div>
 
-            <button id="slider-next-btn" class="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <button id="slider-next-btn" class="flex-shrink-0 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
             </button>
         </div>
 
-        {{-- Link "Lihat Semua" untuk tampilan mobile --}}
         <div class="text-center mt-8 md:hidden">
             <a href="{{ route('artikel.index') }}" class="text-blue-600 hover:underline font-semibold">
                 Lihat Semua Artikel →
@@ -230,10 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const prevBtn = document.getElementById('slider-prev-btn');
     const nextBtn = document.getElementById('slider-next-btn');
     
-    // Pastikan elemen ada sebelum menjalankan script
-    if (!track || !prevBtn || !nextBtn) {
-        return;
-    }
+    if (!track || !prevBtn || !nextBtn) return;
 
     const cards = track.children;
     if (cards.length === 0) {
@@ -242,66 +234,44 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    let cardWidth = cards[0].offsetWidth;
     let currentIndex = 0;
     
-    // Fungsi untuk memperbarui posisi slider dan status tombol
     function updateSlider() {
-        // Hitung berapa banyak kartu yang terlihat di layar
+        if (cards.length === 0) return;
+
+        // PERBAIKAN: Dapatkan nilai 'gap' langsung dari CSS
+        const gap = parseFloat(getComputedStyle(track).gap) || 0;
+        const cardWidth = cards[0].offsetWidth;
+        
+        // Jarak geser sekarang adalah lebar kartu DITAMBAH jarak gap
+        const slideDistance = cardWidth + gap;
+        
+        // Geser track slider dengan kalkulasi yang akurat
+        track.style.transform = `translateX(-${currentIndex * slideDistance}px)`;
+
+        // Logika untuk menonaktifkan tombol tetap sama
         const viewportWidth = track.parentElement.offsetWidth;
-        // Penyesuaian kecil untuk pembulatan agar lebih akurat
-        const visibleCards = Math.round(viewportWidth / cardWidth);
-
-        // Geser track
-        track.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
-
-        // ======================================================
-        // PERUBAHAN LOGIKA DARI 'DISABLED' MENJADI 'HIDDEN'
-        // ======================================================
-
-        // Logika untuk Tombol Kiri (Previous)
-        if (currentIndex === 0) {
-            prevBtn.classList.add('hidden');
-        } else {
-            prevBtn.classList.remove('hidden');
-        }
-
-        // Logika untuk Tombol Kanan (Next)
-        if (currentIndex >= cards.length - visibleCards) {
-            nextBtn.classList.add('hidden');
-        } else {
-            nextBtn.classList.remove('hidden');
-        }
+        const visibleCards = Math.round((viewportWidth + gap) / (cardWidth + gap));
+        
+        prevBtn.disabled = (currentIndex === 0);
+        nextBtn.disabled = (currentIndex >= cards.length - visibleCards);
     }
 
-    // Event listener untuk tombol next
     nextBtn.addEventListener('click', () => {
-        const viewportWidth = track.parentElement.offsetWidth;
-        const visibleCards = Math.round(viewportWidth / cardWidth);
-        
-        if (currentIndex < cards.length - visibleCards) {
-            currentIndex++;
-            updateSlider();
-        }
-    });
-
-    // Event listener untuk tombol prev
-    prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateSlider();
-        }
-    });
-
-    // Panggil updateSlider saat ukuran window berubah (untuk responsivitas)
-    window.addEventListener('resize', () => {
-        cardWidth = cards[0].offsetWidth; // Hitung ulang lebar kartu
+        currentIndex++;
         updateSlider();
     });
 
-    // Panggil pertama kali untuk inisialisasi
+    prevBtn.addEventListener('click', () => {
+        currentIndex--;
+        updateSlider();
+    });
+
+    window.addEventListener('resize', updateSlider);
+
     updateSlider();
 });
+</script>
 </script>
 
 <section class="py-20 bg-white dark:bg-black text-center text-black dark:text-white">
