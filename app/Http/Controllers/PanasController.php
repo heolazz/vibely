@@ -182,10 +182,10 @@ class PanasController extends Controller
 
         // Add the additional conditions from your Blade view
         if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
-        if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Cenderung Positif';
-        if ($paMood === 'sedang' && $naMood === 'rendah') return 'Cenderung Positif';
-        if ($paMood === 'rendah' && $naMood === 'sedang') return 'Cenderung Negatif';
-        if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Cenderung Negatif';
+        if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
+        if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
+        if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
+        if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
 
         // Fallback
         return 'Netral';
