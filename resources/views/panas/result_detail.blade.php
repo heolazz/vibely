@@ -122,7 +122,7 @@
 
         {{-- Tombol aksi di bagian bawah --}}
         <div class="mt-12 text-center">
-            <a href="{{ route('panas.history') }}" class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
+            <a href="{{ route('panas.history') }}" class="inline-flex items-center bg-blue-600 text-white px-4 py-2 rounded-full text-base font-semibold hover:bg-blue-700 transition duration-300 shadow-md">
                 Kembali ke Riwayat
             </a>
             <p class="mt-4 text-sm text-gray-500">
