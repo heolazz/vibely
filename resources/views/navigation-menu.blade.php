@@ -1,44 +1,39 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
-                 @if (!Auth::user()->is_admin)
+                @if (!Auth::user()->is_admin)
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
                         <span class="font-bold text-xl text-black">Vibely</span>
-                        <!-- <x-application-mark class="block h-9 w-auto" /> -->
-                    </a>
+                        </a>
                 </div>
 
-                <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-        Dashboard
-    </x-nav-link>
-    
-    <x-nav-link href="{{ route('rekomendasi') }}" :active="request()->routeIs('rekomendasi')">
-        Jurnal Emosi
-    </x-nav-link>
+                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                        Dashboard
+                    </x-nav-link>
+                    
+                    <x-nav-link href="{{ route('rekomendasi') }}" :active="request()->routeIs('rekomendasi')">
+                        Jurnal Emosi
+                    </x-nav-link>
 
-    <x-nav-link href="{{ route('musik.daftar') }}" :active="request()->routeIs('musik.daftar')">
-        Musik
-    </x-nav-link>
+                    <x-nav-link href="{{ route('musik.daftar') }}" :active="request()->routeIs('musik.daftar')">
+                        Musik
+                    </x-nav-link>
 
-    <x-nav-link href="{{ route('panas.show') }}" :active="request()->routeIs('panas.show')">
-        Mood Tracker
-    </x-nav-link>
-    
-    <x-nav-link href="{{ route('artikel.index') }}" :active="request()->routeIs('artikel.index', 'artikel.show')">
-        Artikel
-    </x-nav-link>
-</div>
+                    <x-nav-link href="{{ route('panas.show') }}" :active="request()->routeIs('panas.show')">
+                        Mood Tracker
+                    </x-nav-link>
+                    
+                    <x-nav-link href="{{ route('artikel.index') }}" :active="request()->routeIs('artikel.index', 'artikel.show')">
+                        Artikel
+                    </x-nav-link>
+                </div>
                 @endif
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <!-- Teams Dropdown -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ms-3 relative">
                         <x-dropdown align="right" width="60">
@@ -56,12 +51,10 @@
 
                             <x-slot name="content">
                                 <div class="w-60">
-                                    <!-- Team Management -->
                                     <div class="block px-4 py-2 text-xs text-gray-400">
                                         {{ __('Manage Team') }}
                                     </div>
 
-                                    <!-- Team Settings -->
                                     <x-dropdown-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">
                                         {{ __('Team Settings') }}
                                     </x-dropdown-link>
@@ -72,7 +65,6 @@
                                         </x-dropdown-link>
                                     @endcan
 
-                                    <!-- Team Switcher -->
                                     @if (Auth::user()->allTeams()->count() > 1)
                                         <div class="border-t border-gray-200"></div>
 
@@ -90,7 +82,6 @@
                     </div>
                 @endif
 
-                <!-- Settings Dropdown -->
                 <div class="ms-3 relative">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -106,7 +97,6 @@
                                     </svg>
                                 </button>
                             @else
-                                <!-- fallback kalau tidak ada foto profil -->
                                 <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-md hover:bg-gray-100 cursor-pointer">
                                     <span class="font-semibold text-gray-900">{{ Auth::user()->name }}</span>
                                     <span class="text-xs text-gray-500 uppercase tracking-widest">{{ Auth::user()->role ?? 'User' }}</span>
@@ -115,11 +105,9 @@
                                     </svg>
                                 </span>
                             @endif
-
                         </x-slot>
 
                         <x-slot name="content">
-                            <!-- Account Management -->
                             <div class="block px-4 py-2 text-xs text-gray-400">
                                 {{ __('Manage Account') }}
                             </div>
@@ -136,7 +124,6 @@
 
                             <div class="border-t border-gray-200"></div>
 
-                            <!-- Authentication -->
                             <form method="POST" action="{{ route('logout') }}" x-data>
                                 @csrf
 
@@ -150,7 +137,6 @@
                 </div>
             </div>
 
-            <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="size-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -162,15 +148,29 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        {{-- KODE BARU DITAMBAHKAN DI SINI --}}
+        @if (!Auth::user()->is_admin)
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('rekomendasi') }}" :active="request()->routeIs('rekomendasi')">
+                {{ __('Jurnal Emosi') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('musik.daftar') }}" :active="request()->routeIs('musik.daftar')">
+                {{ __('Musik') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('panas.show') }}" :active="request()->routeIs('panas.show')">
+                {{ __('Mood Tracker') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('artikel.index') }}" :active="request()->routeIs('artikel.index', 'artikel.show')">
+                {{ __('Artikel') }}
+            </x-responsive-nav-link>
         </div>
+        @endif
+        {{-- AKHIR DARI KODE BARU --}}
 
-        <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
@@ -186,7 +186,6 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <!-- Account Management -->
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
@@ -197,7 +196,6 @@
                     </x-responsive-nav-link>
                 @endif
 
-                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
 
@@ -207,7 +205,6 @@
                     </x-responsive-nav-link>
                 </form>
 
-                <!-- Team Management -->
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="border-t border-gray-200"></div>
 
@@ -215,7 +212,6 @@
                         {{ __('Manage Team') }}
                     </div>
 
-                    <!-- Team Settings -->
                     <x-responsive-nav-link href="{{ route('teams.show', Auth::user()->currentTeam->id) }}" :active="request()->routeIs('teams.show')">
                         {{ __('Team Settings') }}
                     </x-responsive-nav-link>
@@ -226,7 +222,6 @@
                         </x-responsive-nav-link>
                     @endcan
 
-                    <!-- Team Switcher -->
                     @if (Auth::user()->allTeams()->count() > 1)
                         <div class="border-t border-gray-200"></div>
 
