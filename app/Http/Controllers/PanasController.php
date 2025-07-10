@@ -95,10 +95,6 @@ class PanasController extends Controller
     {
         $result = PanasResult::where('user_id', Auth::id())->latest()->first();
 
-        if (!$result) {
-            return redirect()->route('panas.show')->with('error', 'Belum ada hasil kuesioner. Silakan isi terlebih dahulu!');
-        }
-
         return $this->prepareResultView($result);
     }
 
@@ -111,8 +107,6 @@ class PanasController extends Controller
                                ->latest()
                                ->paginate(10);
 
-        // Map through the history results to add the moodText and moodTagColor
-        // This is where you prepare data for the view
         $history->getCollection()->transform(function ($result) {
             $result->moodText = $this->determineMood($result->pa_score ?? 0, $result->na_score ?? 0);
             $result->moodTagColor = $this->getMoodTagColor($result->moodText);
@@ -134,11 +128,13 @@ class PanasController extends Controller
 
     /**
      * Helper function to prepare data for result views (latest or detail).
+     * Now handles cases where $result might be null and adds detailed explanations.
      */
     private function prepareResultView($result, $viewName = 'panas.result')
     {
-        $pa = $result->pa_score;
-        $na = $result->na_score;
+        // Initialize variables with default values if $result is null
+        $pa = $result ? $result->pa_score : 0;
+        $na = $result ? $result->na_score : 0;
         $total = $pa + $na;
         $paPercent = $total > 0 ? round(($pa / $total) * 100) : 0;
         $naPercent = 100 - $paPercent;
@@ -147,8 +143,8 @@ class PanasController extends Controller
         $circumference = 2 * M_PI * $radius;
         $strokePA = $circumference * ($paPercent / 100);
         $strokeNA = $circumference * ($naPercent / 100);
-        $colorPA = '#3b82f6';
-        $colorNA = '#e5e7eb';
+        $colorPA = '#2563eb'; // blue-600, consistent with your blade
+        $colorNA = '#9ca3af'; // gray-400, consistent with your blade
 
         $moodText = $this->determineMood($pa, $na);
         $moodImages = [
@@ -157,19 +153,68 @@ class PanasController extends Controller
             'Netral'   => 'netral-mood.gif',
             'Campuran' => 'mix-mood.gif',
         ];
-        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'Netral-sticker.png'));
+        $moodImage = asset('images/stickers/' . ($moodImages[$moodText] ?? 'netral-sticker.png'));
 
-        $recommendedSongs = MoodSong::where('mood_type', $moodText)->get();
+        $recommendedSongs = $result ? MoodSong::where('mood_type', $moodText)->get() : collect();
+
+        // --- NEW: Detailed Explanations for Mood and Scores ---
+        $moodExplanation = '';
+        $moodTip = '';
+        $paInterpretation = '';
+        $naInterpretation = '';
+
+        // Determine PA Interpretation
+        if ($pa > 35) {
+            $paInterpretation = 'tinggi, menunjukkan tingkat antusiasme dan energi yang kuat.';
+        } elseif ($pa >= 25) {
+            $paInterpretation = 'sedang, menunjukkan tingkat antusiasme dan energi yang cukup.';
+        } else {
+            $paInterpretation = 'rendah, menunjukkan tingkat antusiasme dan energi yang lebih rendah.';
+        }
+
+        // Determine NA Interpretation
+        if ($na > 35) {
+            $naInterpretation = 'tinggi, menunjukkan tingkat stres, ketegangan, atau perasaan tidak menyenangkan yang kuat.';
+        } elseif ($na >= 25) {
+            $naInterpretation = 'sedang, menunjukkan tingkat stres, ketegangan, atau perasaan tidak menyenangkan yang cukup.';
+        } else {
+            $naInterpretation = 'rendah, menunjukkan tingkat stres, ketegangan, atau perasaan tidak menyenangkan yang lebih rendah.';
+        }
+
+        // Determine Mood Explanation and Tip
+        switch ($moodText) {
+            case 'Positif':
+                $moodExplanation = 'Anda sedang merasakan banyak emosi menyenangkan dan energik seperti antusiasme, ketertarikan, dan semangat. Ini adalah indikasi tingkat energi dan fokus yang tinggi.';
+                $moodTip = 'Pertahankan momentum positif ini! Lakukan kegiatan yang Anda nikmati atau bagikan energi baik Anda dengan orang lain.';
+                break;
+            case 'Negatif':
+                $moodExplanation = 'Anda mungkin sedang merasakan emosi tidak menyenangkan seperti kesusahan, ketegangan, atau kemarahan. Ini bisa menjadi tanda adanya tekanan atau ketidaknyamanan.';
+                $moodTip = 'Tidak apa-apa untuk merasakan emosi ini. Pertimbangkan untuk beristirahat, melakukan aktivitas relaksasi, atau berbicara dengan seseorang yang Anda percaya.';
+                break;
+            case 'Netral':
+                $moodExplanation = 'Emosi Anda cenderung seimbang, tenang, dan stabil. Anda mungkin tidak merasakan tingkat gairah yang ekstrem, baik positif maupun negatif.';
+                $moodTip = 'Ini waktu yang tepat untuk fokus pada tugas, melakukan refleksi diri, atau merencanakan sesuatu yang menenangkan.';
+                break;
+            case 'Campuran':
+                $moodExplanation = 'Anda mungkin merasakan berbagai emosi, baik positif maupun negatif, secara bersamaan. Hal ini bisa menunjukkan situasi yang kompleks atau perasaan yang bertolak belakang.';
+                $moodTip = 'Perasaan Anda kompleks saat ini. Luangkan waktu untuk memahami apa yang memicu berbagai emosi ini dan berikan diri Anda ruang untuk merasakannya.';
+                break;
+            default: // Should ideally not be hit with current determineMood logic
+                $moodExplanation = 'Kami sedang menganalisis mood Anda. Informasi lebih lanjut akan segera tersedia.';
+                $moodTip = 'Tetap semangat!';
+                break;
+        }
+        // --- END NEW ---
 
         return view($viewName, compact(
             'result', 'pa', 'na', 'paPercent', 'naPercent', 'radius', 'circumference',
-            'strokePA', 'strokeNA', 'colorPA', 'colorNA', 'moodText', 'moodImage', 'recommendedSongs'
+            'strokePA', 'strokeNA', 'colorPA', 'colorNA', 'moodText', 'moodImage', 'recommendedSongs',
+            'moodExplanation', 'moodTip', 'paInterpretation', 'naInterpretation' // NEW variables
         ));
     }
 
     /**
      * Helper function to determine mood type based on PA and NA scores.
-     * This now includes the extended logic for "Cenderung Positif/Negatif".
      */
     private function determineMood($pa, $na) {
         // Menghitung level PA dan NA
@@ -182,7 +227,7 @@ class PanasController extends Controller
         if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
         if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
 
-        
+        // Tambahan penanganan untuk kondisi sedang, seperti di controller Anda
         if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
         if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
         if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
@@ -199,10 +244,8 @@ class PanasController extends Controller
     private function getMoodTagColor($moodText) {
         switch ($moodText) {
             case 'Positif':
-            case 'Cenderung Positif':
                 return 'bg-blue-100 text-blue-800';
             case 'Negatif':
-            case 'Cenderung Negatif':
                 return 'bg-gray-100 text-gray-800';
             case 'Campuran':
                 return 'bg-purple-100 text-purple-800';

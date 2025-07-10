@@ -168,3 +168,5 @@ Route::middleware(['auth'])->group(function () {
     // Jika MusicRecommendationController@show diperlukan:
     // Route::get('/rekomendasi-musik/{songId}', [MusicRecommendationController::class, 'show'])->name('rekomendasi.show');
 });
+
+Route::get('/panas/result', [App\Http\Controllers\PanasController::class, 'showLatestResult'])->name('panas.result');

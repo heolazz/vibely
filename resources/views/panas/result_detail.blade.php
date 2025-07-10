@@ -11,11 +11,11 @@
             </h1>
             <p class="text-base sm:text-lg text-center text-gray-600 mb-8 max-w-2xl mx-auto">
                 Ini adalah analisis rinci dari kuesioner Anda yang diisi pada tanggal
-                <span class="font-semibold">{{ $result->created_at->isoFormat('DD MMMMYYYY [pukul] HH:mm') }} WIB</span>.
+                <span class="font-semibold">{{ $result->created_at->isoFormat('DD MMMM YYYY [pukul] HH:mm') }} WIB</span>.
             </p>
 
             {{-- Kartu Utama Hasil Mood (sama persis dengan panas.result) --}}
-            <div class="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200 mb-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 mb-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 md:gap-x-12 items-center justify-items-center">
                     {{-- Diagram Lingkaran PA/NA --}}
                     <div class="relative w-56 h-56 flex items-center justify-center">
@@ -73,8 +73,33 @@
                 </div>
             </div>
 
+            {{-- NEW: Container for Side-by-Side Explanation and Scores/Tips (from panas.result) --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mb-8">
+
+                {{-- LEFT CARD: Detailed Mood Explanation --}}
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 text-center">Apa Arti Mood Ini?</h2>
+                    <p class="text-gray-700 text-base leading-relaxed text-center">
+                        {{ $moodExplanation }}
+                    </p>
+                </div>
+
+                {{-- RIGHT CARD: PA/NA Scores, Scale, and Tip --}}
+                <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-900 text-center">Detail Skor & Saran</h2>
+                    <div class="text-base text-gray-600 space-y-3">
+                        <p><strong class="text-blue-700">PA (Positive Affect):</strong> {{ $pa }} / 50, <span class="italic">{{ $paInterpretation }}</span></p>
+                        <p><strong class="text-gray-700">NA (Negative Affect):</strong> {{ $na }} / 50, <span class="italic">{{ $naInterpretation }}</span></p>
+                        <p class="text-xs text-gray-500">*Skor PA dan NA diukur dari 10 (sangat rendah) hingga 50 (sangat tinggi).</p>
+                        <p class="text-base italic text-gray-700 mt-4">
+                            <span class="font-semibold text-blue-600">Tip untuk Anda:</span> {{ $moodTip }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {{-- Kartu Rekomendasi Musik (Sekarang meniru style result.blade.php) --}}
-            <div class="bg-white p-6 sm:p-8 rounded-2xl  border border-gray-200 mt-8">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 mt-8">
                 <h2 class="text-2xl font-bold mb-6 text-gray-900 text-center">Playlist Rekomendasi untuk Mood Ini</h2>
 
                 @if($recommendedSongs->isNotEmpty())
@@ -115,7 +140,7 @@
 
         @else
             {{-- Pesan fallback jika $result tidak ada (seharusnya tidak tercapai dengan findOrFail di controller) --}}
-            <div class="bg-white p-8 rounded-2xl  border border-gray-200 text-center py-20">
+            <div class="bg-white p-8 rounded-2xl border border-gray-200 text-center py-20">
                 <p class="text-gray-600 italic text-xl">Hasil kuesioner tidak ditemukan untuk ID ini.</p>
             </div>
         @endif
