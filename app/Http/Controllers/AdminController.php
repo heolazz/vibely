@@ -7,7 +7,7 @@ use App\Models\Song;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Carbon\Carbon; // Pastikan Carbon diimpor
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -27,7 +27,6 @@ class AdminController extends Controller
 
         // Data untuk Quick Stats
         $articlesToday = Article::whereDate('created_at', today())->count();
-        
 
 
         // Kirimkan semua data ke view
@@ -183,12 +182,34 @@ class AdminController extends Controller
         return redirect()->route('admin.articles.index')->with('success', 'Artikel berhasil dihapus!');
     }
 
-    // Tampilkan daftar lagu
-    public function showSongs()
+    // Tampilkan daftar lagu dengan fitur pencarian dan filter emosi
+    public function showSongs(Request $request)
     {
-        $songs = Song::latest()->paginate(10);
-        return view('admin.songs.index', compact('songs'));
+        $query = Song::query();
+
+        // Search by judul or artist
+        if ($request->has('search') && $request->input('search') != '') {
+            $search = $request->input('search');
+            $query->where('judul', 'like', '%' . $search . '%')
+                  ->orWhere('artist', 'like', '%' . $search . '%');
+        }
+
+        // Filter by emotion
+        if ($request->has('emotion') && $request->input('emotion') != '') {
+            $emotion = $request->input('emotion');
+            $query->where('emotion', $emotion);
+        }
+
+        // Order by latest (default)
+        $songs = $query->latest()->paginate(10);
+
+        // Get distinct emotions for the filter dropdown
+        $emotions = Song::select('emotion')->distinct()->whereNotNull('emotion')->pluck('emotion');
+
+
+        return view('admin.songs.index', compact('songs', 'emotions'));
     }
+
 
     // Form tambah lagu
     public function createSong()

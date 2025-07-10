@@ -3,7 +3,6 @@
 @section('content')
 <div class="bg-white min-h-screen py-12">
     <div class="max-w-6xl mx-auto px-6">
-        <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
             <h1 class="text-3xl font-bold text-gray-800">🎵 Daftar Lagu</h1>
             <a href="{{ route('admin.songs.create') }}"
@@ -15,14 +14,40 @@
             </a>
         </div>
 
-        <!-- Notifikasi -->
         @if(session('success'))
             <div class="mb-6 p-4 rounded-lg bg-green-100 border border-green-300 text-green-800 shadow-sm">
                 {{ session('success') }}
             </div>
         @endif
 
-        <!-- Tabel (Desktop) -->
+        <div class="mb-6 flex flex-col md:flex-row gap-4">
+            <form action="{{ route('admin.songs.index') }}" method="GET" class="flex-grow flex gap-4">
+                <input type="text" name="search" placeholder="Cari judul atau artis..."
+                       value="{{ request('search') }}"
+                       class="flex-grow px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <select name="emotion"
+                        class="px-3/4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="">Semua Emosi</option>
+                    @foreach($emotions as $emotionOption)
+                        <option value="{{ $emotionOption }}" {{ request('emotion') == $emotionOption ? 'selected' : '' }}>
+                            {{ $emotionOption }}
+                        </option>
+                    @endforeach
+                </select>
+                <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-300">
+                    Filter
+                </button>
+                @if(request('search') || request('emotion'))
+                    <a href="{{ route('admin.songs.index') }}"
+                       class="inline-flex items-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow transition duration-300">
+                        Reset
+                    </a>
+                @endif
+            </form>
+        </div>
+
+
         @if($songs->count())
         <div class="hidden md:block overflow-x-auto bg-white shadow-md rounded-xl ring-1 ring-black ring-opacity-5">
             <table class="min-w-full divide-y divide-gray-200">
@@ -74,7 +99,6 @@
             </table>
         </div>
 
-        <!-- Mobile (Cards) -->
         <div class="md:hidden space-y-4">
             @foreach($songs as $song)
             <div class="bg-white rounded-xl shadow p-4">
@@ -110,9 +134,8 @@
             @endforeach
         </div>
 
-        <!-- Pagination -->
         <div class="mt-6">
-            {{ $songs->links() }}
+            {{ $songs->appends(request()->query())->links() }}
         </div>
         @else
             <p class="text-gray-600 mt-6">Belum ada lagu yang ditambahkan.</p>

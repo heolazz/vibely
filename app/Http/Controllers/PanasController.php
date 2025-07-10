@@ -172,22 +172,24 @@ class PanasController extends Controller
      * This now includes the extended logic for "Cenderung Positif/Negatif".
      */
     private function determineMood($pa, $na) {
+        // Menghitung level PA dan NA
         $paMood = $pa > 35 ? 'tinggi' : ($pa >= 25 ? 'sedang' : 'rendah');
         $naMood = $na > 35 ? 'tinggi' : ($na >= 25 ? 'sedang' : 'rendah');
 
+        // Menentukan tipe Mood
         if ($paMood === 'tinggi' && $naMood === 'rendah') return 'Positif';
         if ($paMood === 'rendah' && $naMood === 'tinggi') return 'Negatif';
         if ($paMood === 'tinggi' && $naMood === 'tinggi') return 'Campuran';
         if ($paMood === 'rendah' && $naMood === 'rendah') return 'Netral';
 
-        // Add the additional conditions from your Blade view
+        
         if ($paMood === 'sedang' && $naMood === 'sedang') return 'Netral';
         if ($paMood === 'tinggi' && $naMood === 'sedang') return 'Positif';
         if ($paMood === 'sedang' && $naMood === 'rendah') return 'Positif';
         if ($paMood === 'rendah' && $naMood === 'sedang') return 'Negatif';
         if ($paMood === 'sedang' && $naMood === 'tinggi') return 'Negatif';
 
-        // Fallback
+        // Default
         return 'Netral';
     }
 
