@@ -51,14 +51,25 @@ class RekomendasiController extends Controller
         }
 
         $emotion = session('selected_emotion');
-
         $songs = null;
+        $explanation = null;
+
         if ($emotion) {
             $songs = Song::where('emotion', $emotion)->get();
+
+            // --- PERUBAHAN DI SINI ---
+            // Acak lagu dan ambil hanya 5 lagu secara acak
+            if ($songs->isNotEmpty()) {
+                $songs = $songs->shuffle()->take(2); // Ambil 5 lagu secara acak
+            }
+            // --- AKHIR PERUBAHAN ---
+
+            // Get explanation based on emotion
+            $explanation = $this->getEmotionExplanation($emotion);
         }
 
-        // Teruskan $emotionCounts dan $daysFilter ke view
-        return view('rekomendasi', compact('emotionNotes', 'songs', 'emotion', 'emotionCounts', 'daysFilter'));
+        // Teruskan $emotionCounts, $daysFilter, dan $explanation ke view
+        return view('rekomendasi', compact('emotionNotes', 'songs', 'emotion', 'emotionCounts', 'daysFilter', 'explanation'));
     }
 
     /**
@@ -103,8 +114,19 @@ class RekomendasiController extends Controller
         // Ambil lagu-lagu berdasarkan emosi dari catatan yang dipilih
         $songs = Song::where('emotion', $emotionNote->emotion)->get();
 
-        // Teruskan catatan emosi dan lagu-lagu ke view detail
-        return view('emotion_note_detail', compact('emotionNote', 'songs'));
+        // --- PERUBAHAN DI SINI JUGA UNTUK TAMPILAN DETAIL ---
+        // Acak lagu dan ambil hanya 5 lagu secara acak untuk tampilan detail
+        if ($songs->isNotEmpty()) {
+            $songs = $songs->shuffle()->take(5); // Ambil 5 lagu secara acak
+        }
+        // --- AKHIR PERUBAHAN ---
+
+        // Get explanation for the emotion in the detail view
+        $explanation = $this->getEmotionExplanation($emotionNote->emotion);
+
+
+        // Teruskan catatan emosi, lagu-lagu, dan penjelasan ke view detail
+        return view('emotion_note_detail', compact('emotionNote', 'songs', 'explanation'));
     }
 
     /**
@@ -127,5 +149,27 @@ class RekomendasiController extends Controller
 
         // Kembalikan ke halaman rekomendasi dengan pesan sukses
         return redirect()->route('rekomendasi')->with('success', 'Jurnal berhasil dihapus!');
+    }
+
+    /**
+     * Mengembalikan penjelasan untuk setiap emosi berdasarkan model Circumplex.
+     *
+     * @param string $emotion Nama emosi (Senang, Sedih, Marah, Cemas).
+     * @return string Penjelasan tentang pemilihan musik untuk emosi tersebut.
+     */
+    private function getEmotionExplanation(string $emotion): string
+    {
+        switch (strtolower($emotion)) {
+            case 'marah':
+                return "Untuk emosi marah, musik dengan energi tinggi (> 0,67) dan valence rendah hingga sedang (< 0,66) dipilih agar Anda dapat menyalurkan emosi secara sehat. Musik dengan intensitas tinggi seperti genre metal atau rock dapat membantu memproses emosi marah secara konstruktif, membantu Anda merasa lebih aktif dan terinspirasi, serta menurunkan stres dan iritasi.";
+            case 'cemas':
+                return "Untuk emosi cemas, lagu-lagu dipilih dengan valence dan energi rendah hingga sedang (< 0,66), untuk menenangkan pikiran dan tubuh Anda. Musik yang lambat, lembut, atau instrumental sangat cocok untuk membantu mengurangi ketegangan dan rasa gelisah.";
+            case 'sedih':
+                return "Untuk emosi sedih, musik cenderung memiliki valence rendah (< 0,33) dan energi rendah hingga sedang (< 0,66), untuk menciptakan ruang refleksi atau membantu proses ekspresi emosional. Beberapa lagu dengan valence sedikit lebih tinggi juga disertakan untuk memberikan nuansa harapan dan pemulihan.";
+            case 'senang':
+                return "Untuk emosi senang, musik yang dipilih memiliki valence tinggi (> 0,67) dan energi sedang hingga tinggi (0,34 < energi < 1), untuk mempertahankan dan memperkuat suasana hati positif Anda. Lagu-lagu ini cenderung ceria, bersemangat, dan cocok untuk meningkatkan semangat serta motivasi.";
+            default:
+                return "Rekomendasi musik didasarkan pada analisis emosi Anda menggunakan model Valence dan Energy. Setiap emosi memiliki karakteristik musik yang sesuai untuk mendukung suasana hati Anda.";
+        }
     }
 }

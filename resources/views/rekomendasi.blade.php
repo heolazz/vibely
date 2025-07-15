@@ -50,8 +50,8 @@
                                     id="note"
                                     rows="11"
                                     class="w-full h-full text-black placeholder-gray-400
-                                            bg-[url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'></svg>')]
-                                            bg-repeat-y bg-[length:100%_2.5rem] resize-none focus:outline-none rounded-xl p-2"
+                                                bg-[url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'></svg>')]
+                                                bg-repeat-y bg-[length:100%_2.5rem] resize-none focus:outline-none rounded-xl p-2"
                                     placeholder="Tulis sesuatu yang ingin kamu refleksikan hari ini..."></textarea>
                             </div>
                         </div>
@@ -71,6 +71,15 @@
                     <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">
                         Musik untuk Emosi: <span class="capitalize text-blue-600">{{ $emotion }}</span>
                     </h2>
+
+                    {{-- Penjelasan Rekomendasi Musik --}}
+                    @isset($explanation)
+                    <div class="mb-6 bg-blue-50 p-4 rounded-xl border border-blue-200 text-blue-800">
+                        <h3 class="text-lg font-semibold mb-2">Mengapa Musik Ini Direkomendasikan?</h3>
+                        <p class="text-sm leading-relaxed">{!! $explanation !!}</p>
+                    </div>
+                    @endisset
+
                     @if($songs->count())
                         <ul class="space-y-3">
                             @foreach($songs as $song)
@@ -83,7 +92,7 @@
                                     <div class="text-blue-500 hover:text-blue-700 flex-shrink-0" style="width: 28px; height: 28px;">
                                         <svg viewBox="0 0 512 512" style="fill: currentColor;">
                                             <g>
-                                                <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256		C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031		c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031		l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
+                                                <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256 	C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031 	c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031 	l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
                                             </g>
                                         </svg>
                                     </div>

@@ -40,6 +40,14 @@
                 </div>
             </div>
 
+            {{-- Penjelasan Rekomendasi Musik --}}
+            @isset($explanation)
+            <div class="mb-6 bg-blue-50 p-4 rounded-xl border border-blue-200 text-blue-800">
+                <h3 class="text-lg font-semibold mb-2">Mengapa Musik Ini Direkomendasikan?</h3>
+                <p class="text-sm leading-relaxed">{!! $explanation !!}</p>
+            </div>
+            @endisset
+
             <div class="mb-6">
                 <h3 class="text-xl font-semibold text-gray-700 mb-4">Musik Rekomendasi untuk Emosi Ini:</h3>
                 @if($songs->count())
@@ -50,14 +58,15 @@
                                     <p class="font-semibold text-gray-900 truncate" title="{{ $song->judul }}">{{ $song->judul }}</p>
                                     <p class="text-sm text-gray-600 truncate" title="{{ $song->artist }}">oleh {{ $song->artist }}</p>
                                 </div>
-                                 {{-- SVG Icon Play Baru --}}
+                                   {{-- SVG Icon Play Baru --}}
                                 <div class="text-blue-500 hover:text-blue-700 flex-shrink-0" style="width: 28px; height: 28px;">
                                     <svg viewBox="0 0 512 512" style="fill: currentColor;">
                                         <g>
-                                            <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256		C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031		c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031		l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
+                                            <path d="M256,0C114.625,0,0,114.625,0,256c0,141.374,114.625,256,256,256c141.374,0,256-114.626,256-256 	C512,114.625,397.374,0,256,0z M351.062,258.898l-144,85.945c-1.031,0.626-2.344,0.657-3.406,0.031 	c-1.031-0.594-1.687-1.702-1.687-2.937v-85.946v-85.946c0-1.218,0.656-2.343,1.687-2.938c1.062-0.609,2.375-0.578,3.406,0.031 	l144,85.962c1.031,0.586,1.641,1.718,1.641,2.89C352.703,257.187,352.094,258.297,351.062,258.898z"/>
                                         </g>
                                     </svg>
-                                </div>                            </a>
+                                </div>
+                            </a>
                         @endforeach
                     </ul>
                 @else
@@ -75,7 +84,7 @@
 
                 {{-- Tombol Hapus Jurnal - Kanan --}}
                 <button type="button" onclick="showDeleteModal({{ $emotionNote->id }})"
-                        class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-200 w-full sm:w-auto justify-center">
+                                class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-200 w-full sm:w-auto justify-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     Hapus Jurnal
                 </button>
