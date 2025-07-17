@@ -60,7 +60,7 @@ class RekomendasiController extends Controller
             // --- PERUBAHAN DI SINI ---
             // Acak lagu dan ambil hanya 5 lagu secara acak
             if ($songs->isNotEmpty()) {
-                $songs = $songs->shuffle()->take(2); // Ambil 5 lagu secara acak
+                $songs = $songs->shuffle()->take(2); // Ambil 5 lagu secara acac
             }
             // --- AKHIR PERUBAHAN ---
 
@@ -161,15 +161,15 @@ class RekomendasiController extends Controller
     {
         switch (strtolower($emotion)) {
             case 'marah':
-                return "Untuk emosi marah, musik dengan energi tinggi (> 0,67) dan valence rendah hingga sedang (< 0,66) dipilih agar Anda dapat menyalurkan emosi secara sehat. Musik dengan intensitas tinggi seperti genre metal atau rock dapat membantu memproses emosi marah secara konstruktif, membantu Anda merasa lebih aktif dan terinspirasi, serta menurunkan stres dan iritasi.";
+                return "Untuk emosi marah, musik dengan <span class=\"info-term\" data-term=\"energy\">energi</span> tinggi (> 0,67) dan <span class=\"info-term\" data-term=\"valence\">valence</span> rendah hingga sedang (< 0,66) dipilih agar Anda dapat menyalurkan emosi secara sehat. Musik dengan intensitas tinggi seperti genre metal atau rock dapat membantu memproses emosi marah secara konstruktif, membantu Anda merasa lebih aktif dan terinspirasi, serta menurunkan stres dan iritasi.";
             case 'cemas':
-                return "Untuk emosi cemas, lagu-lagu dipilih dengan valence dan energi rendah hingga sedang (< 0,66), untuk menenangkan pikiran dan tubuh Anda. Musik yang lambat, lembut, atau instrumental sangat cocok untuk membantu mengurangi ketegangan dan rasa gelisah.";
+                return "Untuk emosi cemas, lagu-lagu dipilih dengan <span class=\"info-term\" data-term=\"valence\">valence</span> dan <span class=\"info-term\" data-term=\"energy\">energi</span> rendah hingga sedang (< 0,66), untuk menenangkan pikiran dan tubuh Anda. Musik yang lambat, lembut, atau instrumental sangat cocok untuk membantu mengurangi ketegangan dan rasa gelisah.";
             case 'sedih':
-                return "Untuk emosi sedih, musik cenderung memiliki valence rendah (< 0,33) dan energi rendah hingga sedang (< 0,66), untuk menciptakan ruang refleksi atau membantu proses ekspresi emosional. Beberapa lagu dengan valence sedikit lebih tinggi juga disertakan untuk memberikan nuansa harapan dan pemulihan.";
+                return "Untuk emosi sedih, musik cenderung memiliki <span class=\"info-term\" data-term=\"valence\">valence</span> rendah (< 0,33) dan <span class=\"info-term\" data-term=\"energy\">energi</span> rendah hingga sedang (< 0,66), untuk menciptakan ruang refleksi atau membantu proses ekspresi emosional. Beberapa lagu dengan <span class=\"info-term\" data-term=\"valence\">valence</span> sedikit lebih tinggi juga disertakan untuk memberikan nuansa harapan dan pemulihan.";
             case 'senang':
-                return "Untuk emosi senang, musik yang dipilih memiliki valence tinggi (> 0,67) dan energi sedang hingga tinggi (0,34 < energi < 1), untuk mempertahankan dan memperkuat suasana hati positif Anda. Lagu-lagu ini cenderung ceria, bersemangat, dan cocok untuk meningkatkan semangat serta motivasi.";
+                return "Untuk emosi senang, musik yang dipilih memiliki <span class=\"info-term\" data-term=\"valence\">valence</span> tinggi (> 0,67) dan <span class=\"info-term\" data-term=\"energy\">energi</span> sedang hingga tinggi (0,34 < energi < 1), untuk mempertahankan dan memperkuat suasana hati positif Anda. Lagu-lagu ini cenderung ceria, bersemangat, dan cocok untuk meningkatkan semangat serta motivasi.";
             default:
-                return "Rekomendasi musik didasarkan pada analisis emosi Anda menggunakan model Valence dan Energy. Setiap emosi memiliki karakteristik musik yang sesuai untuk mendukung suasana hati Anda.";
+                return "Rekomendasi musik didasarkan pada analisis emosi Anda menggunakan model <span class=\"info-term\" data-term=\"valence\">Valence</span> dan <span class=\"info-term\" data-term=\"energy\">Energy</span>. Setiap emosi memiliki karakteristik musik yang sesuai untuk mendukung suasana hati Anda.";
         }
     }
 }

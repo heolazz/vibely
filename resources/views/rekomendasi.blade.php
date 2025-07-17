@@ -1,6 +1,84 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    .info-term {
+        cursor: help; /* Mengubah kursor menjadi tanda tanya */
+        border-bottom: 1px dotted #3b82f6; /* Garis bawah putus-putus biru */
+        color: #3b82f6; /* Warna teks biru */
+        font-weight: 600; /* Sedikit lebih tebal */
+    }
+    .info-term:hover {
+        color: #1d4ed8; /* Warna biru lebih gelap saat hover */
+    }
+
+    /* Styling untuk modal popup agar terlihat seperti sticker */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Sedikit lebih gelap */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.4s ease, visibility 0.4s ease; /* Transisi lebih lambat */
+    }
+    .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    .modal-content {
+        background-color: #fefefe; /* Warna dasar agak off-white */
+        padding: 2.5rem; /* Padding lebih besar */
+        border-radius: 1.5rem; /* Border radius lebih membulat */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), /* Shadow utama */
+                    0 0 0 5px rgba(255, 255, 255, 0.5); /* Border luar putih tipis */
+        max-width: 480px; /* Lebar maksimum sedikit disesuaikan */
+        width: 90%;
+        position: relative; /* Diperlukan untuk pseudo-element */
+        transform: scale(0.8) rotateX(15deg); /* Efek awal 3D: sedikit lebih kecil & miring */
+        opacity: 0;
+        transition: transform 0.4s ease-out, opacity 0.4s ease-out; /* Transisi untuk masuk */
+        perspective: 1000px; /* Untuk efek 3D */
+    }
+    .modal-overlay.show .modal-content {
+        transform: scale(1) rotateX(0deg); /* Kembali ke ukuran normal & tidak miring */
+        opacity: 1;
+    }
+
+    /* Efek visual tambahan seperti 'tempelan' */
+    .modal-content::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%) rotate(5deg); /* Pita atau bagian atas sticker */
+        width: 80px;
+        height: 20px;
+        background-color: #a78bfa; /* Warna ungu */
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: -1; /* Di belakang konten utama */
+    }
+    .modal-content::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        right: 20px;
+        transform: rotate(-8deg); /* Sudut bawah sticker */
+        width: 60px;
+        height: 15px;
+        background-color: #facc15; /* Warna kuning */
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: -1;
+    }
+</style>
 <div class="bg-cover bg-center min-h-screen py-12" style="background-image: url('{{ asset('images/bg-kuiz.jpg') }}');"> {{-- Perhatikan: bg-kuiz.jpg --}}
     {{-- Kontainer utama: Default px-4, sm:px-6 (tablet), lg:px-8 (desktop) untuk spasi yang lebih baik --}}
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -263,6 +341,71 @@
                 emotionChartInstance.destroy();
                 emotionChartInstance = null; // Setel ulang variabel
             }
+        }
+    });
+</script>
+
+{{-- Modal untuk penjelasan Valence/Energy --}}
+<div id="infoModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3 id="infoModalTitle" class="text-xl font-bold mb-4 text-gray-800"></h3>
+        <p id="infoModalBody" class="text-gray-700 leading-relaxed mb-6"></p>
+        <div class="flex justify-end">
+            <button type="button" onclick="hideInfoModal()"
+                    class="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-200 text-sm font-medium">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fungsi untuk menampilkan modal info
+    function showInfoModal(title, body) {
+        document.getElementById('infoModalTitle').innerText = title;
+        document.getElementById('infoModalBody').innerText = body;
+        const modal = document.getElementById('infoModal');
+        modal.classList.remove('hidden');
+        setTimeout(() => modal.classList.add('show'), 10); // Tambahkan kelas 'show' setelah sedikit delay
+    }
+
+    // Fungsi untuk menyembunyikan modal info
+    function hideInfoModal() {
+        const modal = document.getElementById('infoModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.classList.add('hidden'), 300); // Sembunyikan setelah transisi selesai
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const infoTerms = document.querySelectorAll('.info-term');
+        infoTerms.forEach(term => {
+            term.addEventListener('click', function() {
+                const termType = this.dataset.term;
+                let title = '';
+                let body = '';
+
+                if (termType === 'valence') {
+                    title = 'Apa itu Valence?';
+                    body = 'Valence adalah ukuran seberapa positif atau negatif suatu emosi atau suasana hati. Dalam konteks musik, valence mengacu pada tingkat "kecerahan" atau "kegelapan" sebuah lagu. Lagu dengan valence tinggi (mendekati 1) terdengar ceria, bahagia, dan positif, sedangkan lagu dengan valence rendah (mendekati 0) terdengar sedih, melankolis, atau negatif.';
+                } else if (termType === 'energy') {
+                    title = 'Apa itu Energy?';
+                    body = 'Energy adalah ukuran intensitas atau aktivitas suatu emosi atau suasana hati. Dalam konteks musik, energy mengacu pada tingkat "kekuatan" atau "keaktifan" sebuah lagu. Lagu dengan energy tinggi (mendekati 1) terdengar energik, cepat, dan intens, sedangkan lagu dengan energy rendah (mendekati 0) terdengar tenang, lambat, dan lembut.';
+                }
+
+                if (title && body) {
+                    showInfoModal(title, body);
+                }
+            });
+        });
+
+        // Opsional: Tutup modal jika mengklik di luar area modal
+        const infoModal = document.getElementById('infoModal');
+        if (infoModal) {
+            infoModal.addEventListener('click', function(event) {
+                if (event.target === infoModal) {
+                    hideInfoModal();
+                }
+            });
         }
     });
 </script>
